@@ -1,0 +1,37 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  border: 1px solid;
+  background-color: rgb(203, 210, 164);
+}
+
+.nav-items {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  font-size: larger;
+}
+
+.goalrush-title {
+  font-size: 1.8rem;
+  font-weight: bolder;
+}
+
+.goal-text {
+  color: rgb(154, 126, 111);
+}
+
+.rush-text {
+  color: rgb(84, 71, 63);
+}
+
+.link {
+  text-decoration: none;
+  color: rgb(84, 71, 63);
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: rgb(0, 0, 0);
+}
