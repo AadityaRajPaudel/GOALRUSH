@@ -3,14 +3,14 @@ import Navbar from "../components/Navbar";
 import "../styles/signin.css";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import { eyeOff } from "react-icons-kit/feather/eyeOff";
-import { eye } from "react-icons-kit/feather/eye";
+import { Link } from "react-router-dom";
 
 export default function Signin() {
   const [showPassword, setShowPassword] = React.useState(false);
-  const [formdata, setFormdata] = React.useState();
-  console.log(showPassword);
-  function handleChange() {}
+  const [formdata, setFormdata] = React.useState({}); // phone, password, confirmPassword
+
+  function handleChange(e) {}
+
   return (
     <div>
       <Navbar className="navbar-imported" />
@@ -27,12 +27,14 @@ export default function Signin() {
               onChange={handleChange}
             />
           </div>
+
           <div className="password-input">
             <label htmlFor="password">Enter Password:</label>
             <input
               id="password"
               type={showPassword ? "password" : "text"}
               className="password-input-field"
+              onChange={handleChange}
             />
             <span
               className="show-password"
@@ -41,8 +43,14 @@ export default function Signin() {
               {!showPassword ? "Hide" : "Show"} password
             </span>
           </div>
-          <button className="signin-button">SignIn</button>
+          <button className="signin-button">SIGN IN</button>
           <div>Or Login with GOOGLE</div>
+          <div>
+            Don't have an account?{" "}
+            <Link to={"/signup"} className="link">
+              SignUp
+            </Link>
+          </div>
         </form>
       </div>
     </div>

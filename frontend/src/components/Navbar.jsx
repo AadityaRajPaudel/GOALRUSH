@@ -17,8 +17,8 @@ export default function Navbar() {
         <Link to={"/home"} className="link">
           <div>Home</div>
         </Link>
-        <Link to={"/signup"} className="link">
-          <div>SignUp</div>
+        <Link to={"/signin"} className="link">
+          <div>Sign-In</div>
         </Link>
         <Link to={"/profile"} className="link">
           <div>Profile</div>
