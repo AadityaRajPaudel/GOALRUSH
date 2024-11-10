@@ -9,7 +9,16 @@ export default function Signin() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [formdata, setFormdata] = React.useState({}); // phone, password, confirmPassword
 
-  function handleChange(e) {}
+  function handleChange(e) {
+    setFormdata((prevFormdata) => {
+      return {
+        ...prevFormdata,
+        [e.target.id]: e.target.value,
+      };
+    });
+  }
+
+  console.log(formdata);
 
   return (
     <div>
@@ -18,12 +27,12 @@ export default function Signin() {
         <form className="signin-form">
           <h1 className="signin-title">Sign In</h1>
           <hr />
-          <div className="phone-input">
-            <label htmlFor="phone">Phone Number:</label>
-            <PhoneInput
-              id="phone"
-              className="phone-input-field"
-              placeholder="(000)- 000-0000"
+          <div className="username-input">
+            <label htmlFor="username">Enter Username:</label>
+            <input
+              className="username-input-field"
+              id="username"
+              placeholder="username"
               onChange={handleChange}
             />
           </div>

@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = React.useState(false);
-  const [phone, setPhone] = React.useState("");
   const [formdata, setFormdata] = React.useState({}); // phone, password, confirmPassword, terms
 
   const handleChange = (e) => {
@@ -28,21 +27,13 @@ export default function Signup() {
         <form className="signup-form">
           <h1 className="signup-title">Sign Up</h1>
           <hr />
-          <div className="phone-input">
-            <label htmlFor="phone">Phone Number:</label>
-            <PhoneInput
-              className="phone-input-field"
-              placeholder="(000)- 000-0000"
-              value={phone}
-              onChange={(newValue) => {
-                setPhone(newValue);
-                setFormdata((prev) => {
-                  return {
-                    ...prev,
-                    phone: newValue,
-                  };
-                });
-              }}
+          <div className="username-input">
+            <label htmlFor="username">Enter Username:</label>
+            <input
+              className="username-input-field"
+              id="username"
+              placeholder="username"
+              onChange={handleChange}
             />
           </div>
           <div className="passwords-field">
@@ -52,6 +43,7 @@ export default function Signup() {
                 id="password"
                 type={showPassword ? "password" : "text"}
                 className="password-input-field"
+                placeholder="password"
                 onChange={handleChange}
               />
               <span
@@ -67,6 +59,7 @@ export default function Signup() {
                 id="confirmPassword"
                 type={showPassword ? "password" : "text"}
                 className="password-input-field"
+                placeholder="re-enter password"
                 onChange={handleChange}
               />
               <span

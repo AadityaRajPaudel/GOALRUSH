@@ -20,10 +20,10 @@ pool
 
 export const getusersdb = async () => {
   try {
-    const result = await pool.query("SELECT * FROM users");
+    const [[result]] = await pool.query("SELECT * FROM users");
     return result;
   } catch (err) {
-    return err;
+    throw err;
   }
 };
 
