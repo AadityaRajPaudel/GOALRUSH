@@ -1,23 +1,24 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import "../styles/signin.css";
-import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Signin() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [formdata, setFormdata] = React.useState({}); // phone, password, confirmPassword
 
-  function handleChange(e) {
+  const handleChange = (e) => {
     setFormdata((prevFormdata) => {
       return {
         ...prevFormdata,
         [e.target.id]: e.target.value,
       };
     });
-  }
+  };
 
+  const handleSubmit = () => {};
   console.log(formdata);
 
   return (
@@ -52,7 +53,9 @@ export default function Signin() {
               {!showPassword ? "Hide" : "Show"} password
             </span>
           </div>
-          <button className="signin-button">SIGN IN</button>
+          <button className="signin-button" onClick={handleSubmit}>
+            SIGN IN
+          </button>
           <div>Or Login with GOOGLE</div>
           <div>
             Don't have an account?{" "}

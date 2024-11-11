@@ -1,4 +1,5 @@
 import mysql from "mysql2";
+import { errorThrower } from "./utils/errorThrower.js";
 
 export const pool = mysql
   .createPool({
@@ -23,7 +24,7 @@ export const getusersdb = async () => {
     const [[result]] = await pool.query("SELECT * FROM users");
     return result;
   } catch (err) {
-    throw err;
+    throw errorThrower("Problem fetching users data from database.");
   }
 };
 
@@ -35,11 +36,21 @@ export const getuserdb = async (id) => {
     );
     return result;
   } catch (err) {
-    return err;
+    throw errorThrower("Problem fetching this user from database.");
+  }
+};
+
+export const adduserdb = async (username, password) => {
+  try {
+    const [result] = await pool.query(
+      "INSERT INTO users (username, password) VALUES (?, ?)",
+      [username, password]
+    );
+    const newUserid = result.insertId;
+    return getuserdb(newUserid);
+  } catch (err) {
+    throw errorThrower("Problem adding user to database.");
   }
 };
 
 // console.log(getuserdb()); this cant be done because async function always returns a promise
-getusersdb()
-  .then((users) => console.log(users))
-  .catch((err) => console.log(err));

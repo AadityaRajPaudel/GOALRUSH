@@ -1,7 +1,8 @@
-export const errorThrower = (message, statusCode) => {
-  err = new Error();
+// global error handler function
+
+export const errorThrower = (message) => {
+  const err = new Error();
   err.message = message;
-  err.statusCode = statusCode;
   err.success = false;
   return err;
 };
