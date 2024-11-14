@@ -4,6 +4,7 @@ import {
   signup,
   updateUser,
   deleteUser,
+  logoutUser,
 } from "../controllers/auth.controller.js";
 
 export const authRouter = express.Router();
@@ -13,3 +14,4 @@ authRouter.post("/signin", signin);
 authRouter.post("/signup", signup);
 authRouter.put("/update", updateUser);
 authRouter.delete("/delete", deleteUser);
+authRouter.delete("/logout", logoutUser);
