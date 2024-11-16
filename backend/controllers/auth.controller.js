@@ -45,13 +45,13 @@ export const deleteUser = () => {};
 
 export const logoutUser = (req, res) => {
   try {
-    // req.cookies.access_token accesses the cookie value which will always remain the same for a particular user due to constant jwt_secret
     res
       .status(200)
       .clearCookie("access_token", { httpOnly: true, maxAge: 0 })
       .json({
         success: true,
         message: "Logged out successfully and cookie/token cleared",
+        clearedUser: req.user, // received from middleware
       });
   } catch (err) {
     res.json(errorThrower("Failed to logout user"));

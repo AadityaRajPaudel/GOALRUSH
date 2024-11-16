@@ -6,6 +6,7 @@ import {
   deleteUser,
   logoutUser,
 } from "../controllers/auth.controller.js";
+import { verifyUser } from "../middleware/verifyUser.js";
 
 export const authRouter = express.Router();
 
@@ -14,4 +15,4 @@ authRouter.post("/signin", signin);
 authRouter.post("/signup", signup);
 authRouter.put("/update", updateUser);
 authRouter.delete("/delete", deleteUser);
-authRouter.delete("/logout", logoutUser);
+authRouter.delete("/logout", verifyUser, logoutUser);
