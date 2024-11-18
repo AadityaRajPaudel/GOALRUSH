@@ -1,4 +1,9 @@
-import { getUsersDB, getUserByIdDB } from "../database.js";
+import {
+  getUsersDB,
+  getUserByIdDB,
+  updateUserDB,
+  deleteUserByIdDB,
+} from "../database.js";
 
 // get all users from db (admin only todo)
 export const getUsers = async (req, res) => {
@@ -27,5 +32,19 @@ export const getUser = async (req, res) => {
     });
   } catch (err) {
     res.json(err);
+  }
+};
+
+export const updateUser = async (req, res) => {
+  try {
+    const { userid, username, password } = req.body;
+    await updateUserDB(userid, username, password);
+    const result = await getUserByIdDB(userid);
+    res.status(200).json({
+      success: true,
+      message: result,
+    });
+  } catch (err) {
+    res.status(400).json(err);
   }
 };

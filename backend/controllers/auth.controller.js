@@ -41,7 +41,18 @@ export const signin = async (req, res) => {
   }
 };
 export const updateUser = () => {};
-export const deleteUser = () => {};
+export const deleteUser = async (req, res) => {
+  try {
+    const { userid } = req.params;
+    const result = await deleteUserByIdDB(userid);
+    res.status(200).json({
+      success: true,
+      message: result,
+    });
+  } catch (err) {
+    res.status(400).json(err);
+  }
+};
 
 export const logoutUser = (req, res) => {
   try {
