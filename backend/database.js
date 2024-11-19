@@ -21,7 +21,7 @@ pool
 
 export const getUsersDB = async () => {
   try {
-    const [[result]] = await pool.query("SELECT * FROM users");
+    const [result] = await pool.query("SELECT * FROM users");
     return result;
   } catch (err) {
     throw errorThrower("Problem fetching users data from database.");
@@ -65,13 +65,13 @@ export const addUserDB = async (username, password) => {
   }
 };
 
-export const updateUserDB = async (userid, username, password) => {
+export const updateUserDB = async (userid, username, password, avatar) => {
   try {
-    const result = await pool.query(
-      "UPDATE users SET username=?, password=? WHERE userid=?",
-      [username, password, userid]
+    await pool.query(
+      "UPDATE users SET username=?, password=?, avatar=? WHERE userid=?",
+      [username, password, avatar, userid]
     );
-    console.log(result);
+    return "Successfully updated user details.";
   } catch (err) {
     throw errorThrower("Problem updating the user details");
   }
@@ -88,6 +88,7 @@ export const deleteUserByIdDB = async (userid) => {
   }
 };
 
+// POSTSSS
 export const addPostDB = async (userId, title, content, imageURLs) => {
   try {
     const [post] = await pool.query(
@@ -111,20 +112,25 @@ export const addPostDB = async (userId, title, content, imageURLs) => {
   } catch (err) {}
 };
 
-// needs update
 export const getPostsDB = async () => {
   try {
     const [posts] = await pool.query("SELECT * FROM posts"); // array of posts from posts table
     const [images] = await pool.query("SELECT * FROM images");
+    const [likes] = await pool.query("SELECT * FROM likes");
+    const [comments] = await pool.query("SELECT * FROM comments");
+    const users = await getUsersDB();
+
     // could use joins too
-    const postsWithImages = posts.map((post) => {
+    const completePosts = posts.map((post) => {
       return {
         ...post,
         images: images.filter((image) => image.postid === post.postid),
+        likes: likes.filter((like) => like.postid === post.postid),
+        comments: comments.filter((comment) => comment.postid === post.postid),
+        user: users.find((user) => user.postid === post.postid),
       };
     });
-
-    return postsWithImages;
+    return completePosts;
   } catch (err) {
     throw errorThrower("Cannot get posts from database");
   }
@@ -145,8 +151,9 @@ export const deletePostByIdDB = async (id) => {
   try {
     await pool.query("DELETE FROM posts WHERE postid=?", [id]);
     await pool.query("DELETE FROM images WHERE postid=?", [id]);
-    // await pool.query("DELETE FROM likes ...")
-    return "Successfully deleted from database.";
+    await pool.query("DELETE FROM likes WHERE postid=?", [id]);
+    await pool.query("DELETE FROM comments WHERE postid=?", [id]);
+    return "Post Successfully deleted from database.";
   } catch (err) {
     throw errorThrower(err);
   }
@@ -182,3 +189,44 @@ export const updatePostDB = async (postId, title, content, imageURLs) => {
 */
 
 // console.log(getuserdb()); this cant be done because async function always returns a promise
+
+// LIKESSSSSS
+export const likePostDB = async (postid, userid) => {
+  try {
+    await pool.query("INSERT INTO likes (postid, userid) VALUES (?, ?)", [
+      postid,
+      userid,
+    ]);
+    return "Liked the post.";
+  } catch (err) {
+    throw errorThrower("Failed to like the post.");
+  }
+};
+
+export const unlikePostDB = async (postid, userid) => {
+  try {
+    await pool.query("DELETE FROM likes WHERE postid=? AND userid=?", [
+      postid,
+      userid,
+    ]);
+    return "Unliked the post";
+  } catch (err) {
+    throw errorThrower("failed to unlike the post.");
+  }
+};
+
+// COMMENTSSSS
+export const postCommentDB = async (postid, userid, comment) => {
+  try {
+    await pool.query(
+      "INSERT INTO comments (content, userid, postid) VALUES (?,?,?)",
+      [comment, userid, postid]
+    );
+    return "Comment added successfully.";
+  } catch (err) {
+    throw errorThrower("Failed to post comment.");
+  }
+};
+
+// todo
+export const removeComment = async (postid, commentid) => {};

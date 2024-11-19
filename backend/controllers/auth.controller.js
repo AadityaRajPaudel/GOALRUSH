@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { addUserDB, getUserByUsernameDB } from "../database.js";
+import { addUserDB, getUserByUsernameDB, updateUserDB } from "../database.js";
 import { errorThrower } from "../utils/errorThrower.js";
 
 export const signup = async (req, res) => {
@@ -40,7 +40,23 @@ export const signin = async (req, res) => {
     return res.json(err);
   }
 };
-export const updateUser = () => {};
+
+// receives updated user credentials object for current user
+export const updateUser = async (req, res) => {
+  try {
+    const userid = req.params.userid;
+    const { username, password, avatar } = req.body;
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    const result = await updateUserDB(userid, username, hashedPassword, avatar);
+    res.status(200).json({
+      success: true,
+      message: result,
+    });
+  } catch (err) {
+    res.status(404).json(err);
+  }
+};
+
 export const deleteUser = async (req, res) => {
   try {
     const { userid } = req.params;

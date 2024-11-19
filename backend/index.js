@@ -21,3 +21,5 @@ app.use("/api/users", userRouter); // middleware validate user
 app.use("/api/auth", authRouter);
 app.use("/api/news", newsRouter);
 app.use("/api/posts", postRouter);
+app.use("/api/likes", likesRouter);
+app.use("/api/comments", commentsRouter);
