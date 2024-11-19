@@ -100,7 +100,7 @@ export const addPostDB = async (userId, title, content, imageURLs) => {
       imageURLs.forEach(async (url) => {
         try {
           await pool.query(
-            "INSERT INTO images (postid, imageurl VALUES (?, ?)",
+            "INSERT INTO images (postid, imageurl) VALUES (?, ?)",
             [postId, url]
           );
         } catch (err) {
@@ -118,7 +118,7 @@ export const getPostsDB = async () => {
     const [images] = await pool.query("SELECT * FROM images");
     const [likes] = await pool.query("SELECT * FROM likes");
     const [comments] = await pool.query("SELECT * FROM comments");
-    const users = await getUsersDB();
+    const [users] = await pool.query("SELECT * FROM users ");
 
     // could use joins too
     const completePosts = posts.map((post) => {
@@ -127,7 +127,7 @@ export const getPostsDB = async () => {
         images: images.filter((image) => image.postid === post.postid),
         likes: likes.filter((like) => like.postid === post.postid),
         comments: comments.filter((comment) => comment.postid === post.postid),
-        user: users.find((user) => user.postid === post.postid),
+        user: users.filter((user) => user.userid === post.userid),
       };
     });
     return completePosts;
@@ -149,10 +149,10 @@ export const getPostbyIdDB = async (postId) => {
 
 export const deletePostByIdDB = async (id) => {
   try {
-    await pool.query("DELETE FROM posts WHERE postid=?", [id]);
+    await pool.query("DELETE FROM comments WHERE postid=?", [id]);
     await pool.query("DELETE FROM images WHERE postid=?", [id]);
     await pool.query("DELETE FROM likes WHERE postid=?", [id]);
-    await pool.query("DELETE FROM comments WHERE postid=?", [id]);
+    await pool.query("DELETE FROM posts WHERE postid=?", [id]);
     return "Post Successfully deleted from database.";
   } catch (err) {
     throw errorThrower(err);
@@ -167,13 +167,13 @@ export const updatePostDB = async (postId, title, content, imageURLs) => {
       postId,
     ]);
     // delete all images and re-insert all
-    await pool.query("DELETE * FROM images WHERE postid=?", [postId]);
+    await pool.query("DELETE FROM images WHERE postid=?", [postId]);
     imageURLs.forEach(async (url) => {
       try {
-        await pool.query("INSERT INTO images (postid, imageurl VALUES (?, ?)", [
-          postId,
-          url,
-        ]);
+        await pool.query(
+          "INSERT INTO images (postid, imageurl) VALUES (?, ?)",
+          [postId, url]
+        );
       } catch (err) {
         throw errorThrower("Cannot upload images to database.");
       }
@@ -229,4 +229,4 @@ export const postCommentDB = async (postid, userid, comment) => {
 };
 
 // todo
-export const removeComment = async (postid, commentid) => {};
+export const removeCommentDB = async (postid, commentid) => {};

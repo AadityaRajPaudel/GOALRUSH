@@ -46,7 +46,8 @@ export const uploadPost = async (req, res) => {
 
 export const deletePost = async (req, res) => {
   try {
-    const postId = req.body.postId;
+    const postId = req.params.postid;
+    // delete comments, likes and then post
     const result = await deletePostByIdDB(postId);
     res.status(200).json({
       success: true,
@@ -58,7 +59,8 @@ export const deletePost = async (req, res) => {
 };
 export const updatePost = async (req, res) => {
   try {
-    const { title, content, images, postid } = req.body;
+    const { postid } = req.params;
+    const { title, content, images } = req.body;
     const result = await updatePostDB(postid, title, content, images);
     res.status(200).json({
       success: true,
