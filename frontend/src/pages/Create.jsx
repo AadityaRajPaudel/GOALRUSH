@@ -4,14 +4,20 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 // FIREBASE
 import { app } from "../../firebase.js";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadBytesResumable,
+  uploadBytes,
+} from "firebase/storage";
 
 export default function Create() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userState = useSelector((state) => state.user);
   const [files, setFiles] = React.useState([]);
-  const [uploading, setUploading] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [formData, setFormData] = React.useState({
     title: "",
@@ -29,87 +35,87 @@ export default function Create() {
       };
     });
   };
+  // store a single image file and return its url - IMP
+  const storeImage = async (file) => {
+    return new Promise((res, rej) => {
+      const cloudFormData = new FormData();
+      cloudFormData.append("file", file);
+      cloudFormData.append("upload_preset", "goalrush");
 
-  const handleImageUpload = async (e) => {
-    setUploading(true);
-    if (files.length == 0) {
-      setUploading(false);
+      fetch("https://api.cloudinary.com/v1_1/drtiwkyvj/image/upload", {
+        method: "POST",
+        body: cloudFormData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.secure_url) {
+            console.log("Uploaded to Cloudinary:", data.secure_url);
+            res(data.secure_url);
+          } else {
+            console.log("failed to upload to cloudinary");
+            rej("Failed to upload image to Cloudinary");
+          }
+        })
+        .catch((error) => {
+          console.error("Error uploading to Cloudinary:", error);
+          rej(error);
+        });
+    });
+  };
+
+  const handleImageUpload = async (files) => {
+    setLoading(true);
+
+    if (!files || files.length === 0) {
+      setLoading(false);
       return;
     }
-    // store all promises for all images so that .all can be used
+
+    // Store promises for all images
     const filesPromises = [];
     for (let i = 0; i < files.length; i++) {
       filesPromises.push(storeImage(files[i]));
     }
-    Promise.all(filesPromises)
-      .then((urls) => {
-        setFormData((prevFormData) => {
-          return {
-            ...prevFormData,
-            images: prevFormData.images.concat(urls),
-          };
-        });
-        setUploading(false);
-      })
-      .catch((err) => {
-        setError("Failed to upload");
-      });
+
+    try {
+      const urls = await Promise.all(filesPromises); // Wait for all uploads to complete
+      const newFormData = {
+        ...formData,
+        images: formData.images.concat(urls),
+      };
+      setFormData(newFormData);
+      setLoading(false);
+      console.log("All images uploaded successfully:", urls);
+      return newFormData;
+    } catch (err) {
+      console.error("Failed to upload images:", err);
+      setError("Failed to upload");
+      setLoading(false);
+    }
   };
-
-  // store a single image file and return - IMP
-  const storeImage = async (file) => {
-    return new Promise((res, rej) => {
-      const storage = getStorage(app);
-      // create a unique image name for the image
-      const fileName = new Date().getTime() + file.name;
-      // store "filName.img" in location storage
-      const storageRef = ref(storage, fileName);
-
-      // upoload the file to the storageRef
-      const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-
-      // Listen for state changes, errors, and completion of the upload.
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          // Get task progress
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
-        },
-        (error) => {
-          console.log(error);
-        },
-        () => {
-          // Upload completed successfully, now we can get the download URL
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            // return a resolved promise forimage with its download url
-            res(downloadURL);
-          });
-        }
-      );
-    });
-  };
-
+  console.log(formData);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    handleImageUpload();
-    setUploading(true);
+    const newFormData = await handleImageUpload(files);
+    setLoading(true);
     try {
+      console.log(newFormData);
+
       const result = await fetch("/api/posts/upload", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(newFormData),
         credentials: "include",
       });
-      if (result.success === false) {
+      const data = await result.json();
+      if (data.success === false) {
         setError("Failed to upload post to server.");
         return;
       }
-      setUploading(false);
-      navigate("/");
+      setLoading(false);
+      console.log(data);
     } catch (err) {
       setError(err.message);
       return;
@@ -168,13 +174,16 @@ export default function Create() {
           <div style={{ marginBottom: "15px" }}>
             <label htmlFor="images">
               <strong>Images:</strong>
+              (Only Upload 3 images max.)
             </label>
             <input
               id="images"
               type="file"
               accept="image/*"
               multiple
-              onChange={(e) => setFiles(e.target.files)}
+              onChange={(e) => {
+                setFiles(e.target.files);
+              }}
               style={{ display: "block", margin: "5px 0" }}
             />
           </div>
@@ -191,8 +200,9 @@ export default function Create() {
               cursor: "pointer",
             }}
           >
-            Create Post
+            {loading ? "Loading.." : "Create Post"}
           </button>
+          {error && <div>{error}</div>}
         </form>
       </div>
     </div>

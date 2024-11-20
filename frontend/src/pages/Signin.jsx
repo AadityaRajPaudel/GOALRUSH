@@ -76,7 +76,7 @@ export default function Signin() {
             <label htmlFor="password">Enter Password:</label>
             <input
               id="password"
-              type={showPassword ? "password" : "text"}
+              type={showPassword ? "text" : "password"}
               className="password-input-field"
               onChange={handleChange}
             />
@@ -84,7 +84,7 @@ export default function Signin() {
               className="show-password"
               onClick={() => setShowPassword((prev) => !prev)}
             >
-              {!showPassword ? "Hide" : "Show"} password
+              {!showPassword ? "Show" : "Hide"} password
             </span>
           </div>
           <button className="signin-button" onClick={handleSubmit}>
