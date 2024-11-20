@@ -33,8 +33,8 @@ export const getPost = async (req, res) => {
 
 export const uploadPost = async (req, res) => {
   try {
-    const { title, content, imageURLs, userid } = req.body;
-    const result = await addPostDB(userid, title, content, imageURLs);
+    const { title, content, images, userid } = req.body;
+    const result = await addPostDB(userid, title, content, images);
     res.status(200).json({
       success: true,
       message: result,
