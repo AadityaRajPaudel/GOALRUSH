@@ -52,7 +52,7 @@ export default function Create() {
             console.log("Uploaded to Cloudinary:", data.secure_url);
             res(data.secure_url);
           } else {
-            console.log("failed to upload to cloudinary");
+            console.log(data);
             rej("Failed to upload image to Cloudinary");
           }
         })
@@ -115,6 +115,7 @@ export default function Create() {
         return;
       }
       setLoading(false);
+      navigate("/");
       console.log(data);
     } catch (err) {
       setError(err.message);

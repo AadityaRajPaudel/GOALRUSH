@@ -17,7 +17,7 @@ export default function Navbar() {
   const handleLogout = async (e) => {
     e.preventDefault();
     try {
-      dispatch(deleteUserStart);
+      dispatch(deleteUserStart());
       const result = await fetch("/api/auth/logout", {
         method: "DELETE",
         headers: {

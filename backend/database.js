@@ -65,15 +65,24 @@ export const addUserDB = async (username, password) => {
   }
 };
 
-export const updateUserDB = async (userid, username, password, avatar) => {
+export const updateUserDB = async (userid, username, avatar, password = "") => {
   try {
-    await pool.query(
-      "UPDATE users SET username=?, password=?, avatar=? WHERE userid=?",
-      [username, password, avatar, userid]
-    );
-    return "Successfully updated user details.";
+    if (password === "") {
+      await pool.query("UPDATE users SET username=?, avatar=? WHERE userid=?", [
+        username,
+        avatar,
+        userid,
+      ]);
+      return "Updated details only and not password.";
+    } else {
+      await pool.query(
+        "UPDATE users SET username=?, password=?, avatar=? WHERE userid=?",
+        [username, password, avatar, userid]
+      );
+      return "Successfully updated user details including pw.";
+    }
   } catch (err) {
-    throw errorThrower("Problem updating the user details");
+    throw errorThrower("Username already exists, cannot update");
   }
 };
 
@@ -230,3 +239,22 @@ export const postCommentDB = async (postid, userid, comment) => {
 
 // todo
 export const removeCommentDB = async (postid, commentid) => {};
+
+export const getCommentsDB = async (postid) => {
+  try {
+    const [comments] = await pool.query(
+      "SELECT * from comments WHERE postid=?",
+      [postid]
+    );
+    const [users] = await pool.query("SELECT * FROM users");
+    const commentsWithUserDetails = comments.forEach((comment) => {
+      return {
+        ...comment,
+        user: users.find((user) => user.userid === comment.userid),
+      };
+    });
+    return commentsWithUserDetails;
+  } catch (err) {
+    throw errorThrower("Failed to fetch comments.");
+  }
+};

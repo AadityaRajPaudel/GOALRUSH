@@ -45,13 +45,27 @@ export const signin = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const userid = req.params.userid;
-    const { username, password, avatar } = req.body;
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    const result = await updateUserDB(userid, username, hashedPassword, avatar);
-    res.status(200).json({
-      success: true,
-      message: result,
-    });
+    const { avatar, username } = req.body;
+    if (req.body.password) {
+      const { password } = req.body;
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      const result = await updateUserDB(
+        userid,
+        username,
+        avatar,
+        hashedPassword
+      );
+      res.status(200).json({
+        success: true,
+        message: result,
+      });
+    } else {
+      const result = await updateUserDB(userid, username, avatar);
+      res.status(200).json({
+        success: true,
+        message: result,
+      });
+    }
   } catch (err) {
     res.status(404).json(err);
   }
