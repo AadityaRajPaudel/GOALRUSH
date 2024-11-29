@@ -29,7 +29,7 @@ export default function Profile() {
           (post) => post.userid === userData.userid
         );
         const mappedPosts = posts.map((post) => {
-          return <Post key={post.postid} {...post} />;
+          return <Post key={post.postid} {...post} deletePost={deletePost} />;
         });
         setUserPosts(mappedPosts); // array of components
         console.log(formdata);
@@ -122,6 +122,12 @@ export default function Profile() {
       setError(err.message);
       return;
     }
+  };
+
+  // deleted from post.jsx
+  const deletePost = (postid) => {
+    const updatedPosts = userPosts.filter((post) => post.postid !== postid);
+    setUserPosts(updatedPosts);
   };
 
   return (

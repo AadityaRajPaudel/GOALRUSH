@@ -135,8 +135,20 @@ export const getPostsDB = async () => {
         ...post,
         images: images.filter((image) => image.postid === post.postid),
         likes: likes.filter((like) => like.postid === post.postid),
-        comments: comments.filter((comment) => comment.postid === post.postid),
-        user: users.filter((user) => user.userid === post.userid),
+        comments: comments
+          .filter((comment) => comment.postid === post.postid)
+          .map((comment) => {
+            const commentUser = users.find(
+              (user) => user.userid === comment.userid
+            );
+            return {
+              ...comment,
+              user: commentUser
+                ? { username: commentUser.username, avatar: commentUser.avatar }
+                : null,
+            };
+          }),
+        user: users.find((user) => user.userid === post.userid),
       };
     });
     return completePosts;
@@ -247,7 +259,7 @@ export const getCommentsDB = async (postid) => {
       [postid]
     );
     const [users] = await pool.query("SELECT * FROM users");
-    const commentsWithUserDetails = comments.forEach((comment) => {
+    const commentsWithUserDetails = comments.map((comment) => {
       return {
         ...comment,
         user: users.find((user) => user.userid === comment.userid),
@@ -258,3 +270,7 @@ export const getCommentsDB = async (postid) => {
     throw errorThrower("Failed to fetch comments.");
   }
 };
+
+getCommentsDB(35)
+  .then((comments) => console.log(comments))
+  .catch((err) => console.log(err));

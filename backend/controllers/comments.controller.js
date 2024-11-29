@@ -3,8 +3,8 @@ import { getCommentsDB, postCommentDB, removeCommentDB } from "../database.js";
 export const postComment = async (req, res) => {
   try {
     const { postid } = req.params;
-    const { userid, comment } = req.body;
-    const result = await postCommentDB(postid, userid, comment);
+    const { userid, content } = req.body;
+    const result = await postCommentDB(postid, userid, content);
     res.status(200).json({
       success: true,
       message: result,
