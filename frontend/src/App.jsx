@@ -6,6 +6,8 @@ import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Create from "./pages/Create";
+import UpdatePost from "./pages/UpdatePost";
+import News from "./pages/News";
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
         <Route path="/signup" element={<Signup />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
         <Route path="/create" element={<Create />}></Route>
+        <Route path="/news" element={<News />}></Route>
+        <Route path="/updatepost/:postid" element={<UpdatePost />}></Route>
       </Routes>
     </BrowserRouter>
   );

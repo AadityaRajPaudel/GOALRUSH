@@ -2,7 +2,6 @@ import React from "react";
 import "../styles/post.css";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useId } from "react";
 
 export default function Post(props) {
   const navigate = useNavigate();
@@ -63,7 +62,7 @@ export default function Post(props) {
         body: JSON.stringify(formdata),
       });
       const result = await res.json();
-      document.getElementById("content").value = "";
+      document.getElementById("content").value = ""; // useref
       setComments((prevComments) => {
         const newComment = {
           commentid: result.message[result.message.length - 1].commentid,

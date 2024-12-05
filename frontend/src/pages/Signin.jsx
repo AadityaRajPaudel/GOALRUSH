@@ -55,6 +55,10 @@ export default function Signin() {
     }
   };
 
+  const handleForgetPassword = () => {
+    navigate("/forgetpassword");
+  };
+
   return (
     <div>
       <Navbar className="navbar-imported" />
@@ -96,6 +100,9 @@ export default function Signin() {
             <Link to={"/signup"} className="link">
               SignUp
             </Link>
+          </div>
+          <div>
+            <button onClick={handleForgetPassword}>Forgot Password?</button>
           </div>
         </form>
       </div>
