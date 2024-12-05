@@ -60,8 +60,14 @@ export const deletePost = async (req, res) => {
 export const updatePost = async (req, res) => {
   try {
     const { postid } = req.params;
-    const { title, content, images } = req.body;
-    const result = await updatePostDB(postid, title, content, images);
+    const { title, content, newImages, images } = req.body;
+    const result = await updatePostDB(
+      postid,
+      title,
+      content,
+      newImages,
+      images
+    );
     res.status(200).json({
       success: true,
       message: result, // string

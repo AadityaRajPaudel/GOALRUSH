@@ -86,6 +86,18 @@ export const updateUserDB = async (userid, username, avatar, password = "") => {
   }
 };
 
+export const addUserEmailDB = async (userid, email) => {
+  try {
+    await pool.query("UPDATE users SET email=? WHERE userid=?", [
+      email,
+      userid,
+    ]);
+    return "Email added successfully";
+  } catch (err) {
+    throw errorThrower("Failed to add email.");
+  }
+};
+
 export const deleteUserByIdDB = async (userid) => {
   try {
     // await pool.query("DELETE * FROM images WHERE postid ") tyo image jasko user delete garna lako ho
@@ -159,9 +171,16 @@ export const getPostsDB = async () => {
 
 export const getPostbyIdDB = async (postId) => {
   try {
-    const [[result]] = await pool.query(`SELECT * FROM posts WHERE postid=?`, [
+    const [[post]] = await pool.query(`SELECT * FROM posts WHERE postid=?`, [
       postId,
     ]);
+    const [images] = await pool.query("SELECT * FROM images WHERE postid=?", [
+      postId,
+    ]);
+    const result = {
+      ...post,
+      images,
+    };
     return result;
   } catch (err) {
     throw errorThrower("Failed to get posts from Database.");
@@ -180,26 +199,47 @@ export const deletePostByIdDB = async (id) => {
   }
 };
 
-export const updatePostDB = async (postId, title, content, imageURLs) => {
+export const updatePostDB = async (
+  postId,
+  title,
+  content,
+  imageURLs,
+  oldImages
+) => {
   try {
     await pool.query("UPDATE posts SET title=?, content=? WHERE postid=?", [
       title,
       content,
       postId,
     ]);
-    // delete all images and re-insert all
-    await pool.query("DELETE FROM images WHERE postid=?", [postId]);
-    imageURLs.forEach(async (url) => {
-      try {
+    if (!oldImages) {
+      await pool.query("DELETE FROM images WHERE postid=?", [postId]);
+    } else {
+      const oldImagesid = oldImages.map((img) => img.imageid);
+      await pool.query(
+        "DELETE FROM images WHERE postid=? AND imageid NOT IN (?)",
+        [postId, ...oldImagesid]
+      );
+    }
+    if (imageURLs) {
+      for (let i = 0; i < imageURLs.length; i++) {
         await pool.query(
-          "INSERT INTO images (postid, imageurl) VALUES (?, ?)",
-          [postId, url]
+          `INSERT INTO images (postid, imageurl) VALUES (?, ?)`,
+          [postId, imageURLs[i]]
         );
-      } catch (err) {
-        throw errorThrower("Cannot upload images to database.");
       }
-    });
-    return "Updated successfully from database";
+    }
+    // if (oldImages) {
+    //   for (let i = 0; i < oldImages.length; i++) {
+    //     await pool.query(`INSERT INTO images (postid, imageurl) VALUES (?,?)`, [
+    //       postId,
+    //       oldImages[i].imageurl,
+    //     ]);
+    //   }
+    // }
+
+    const result = await getPostbyIdDB(postId);
+    return result;
   } catch (err) {
     throw errorThrower("Problem while updating post in database.");
   }
@@ -270,7 +310,3 @@ export const getCommentsDB = async (postid) => {
     throw errorThrower("Failed to fetch comments.");
   }
 };
-
-getCommentsDB(35)
-  .then((comments) => console.log(comments))
-  .catch((err) => console.log(err));

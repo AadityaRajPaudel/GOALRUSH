@@ -1,6 +1,11 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { addUserDB, getUserByUsernameDB, updateUserDB } from "../database.js";
+import {
+  addUserDB,
+  addUserEmailDB,
+  getUserByUsernameDB,
+  updateUserDB,
+} from "../database.js";
 import { errorThrower } from "../utils/errorThrower.js";
 
 export const signup = async (req, res) => {
@@ -66,6 +71,21 @@ export const updateUser = async (req, res) => {
         message: result,
       });
     }
+  } catch (err) {
+    res.status(404).json(err);
+  }
+};
+
+// if user adds their email for recovery
+export const addUserEmail = async (req, res) => {
+  const email = req.body.email;
+  const userid = req.params.userid;
+  try {
+    const result = await addUserEmailDB(userid, email);
+    res.status(200).json({
+      success: true,
+      message: result,
+    });
   } catch (err) {
     res.status(404).json(err);
   }
