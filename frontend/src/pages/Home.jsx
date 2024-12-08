@@ -42,15 +42,18 @@ export default function Home() {
     setEmail(e.target.value);
   };
 
-  const handleEmailSubmit = async () => {
+  const handleEmailSubmit = async (e) => {
+    e.preventDefault();
     dispatch(updateUserStart());
     try {
-      const res = await fetch(`/api/auth/addemail/${currentUser.userid}`, {
+      await fetch(`/api/auth/addemail/${currentUser.userid}`, {
         method: "PUT",
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify(email),
+        body: JSON.stringify({
+          email,
+        }),
       });
       dispatch(
         updateUserSuccess({
@@ -68,7 +71,7 @@ export default function Home() {
   return (
     <div>
       <Navbar />
-      {currentUser.username && !currentUser.email && (
+      {currentUser && currentUser.username && !currentUser.email && (
         <div>
           <div>
             You have not entered your email. To make sure you can reset your
@@ -81,6 +84,7 @@ export default function Home() {
               id="email"
               placeholder="you@example.com"
               onChange={handleChange}
+              required
             />
             <button onClick={handleEmailSubmit}>Submit</button>
           </div>

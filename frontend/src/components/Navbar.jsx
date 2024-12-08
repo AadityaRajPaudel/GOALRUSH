@@ -38,7 +38,7 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      <h1 className="goalrush-title">
+      {/* <h1 className="goalrush-title">
         <Link to={"/"} className="link">
           <div>
             <span className="goal-text">Goal</span>
@@ -47,9 +47,11 @@ export default function Navbar() {
         </Link>
       </h1>
       <div className="nav-items">
-        <Link to={"/home"} className="link">
-          <div>Home</div>
-        </Link>
+        {currentUser && (
+          <Link to={"/home"} className="link">
+            <div>Home</div>
+          </Link>
+        )}
         {currentUser && (
           <Link to={`/profile`} className="link">
             <div>Profile</div>
@@ -67,7 +69,53 @@ export default function Navbar() {
             <div>Sign-In</div>
           </Link>
         )}
-      </div>
+      </div> */}
+
+      <ul className="navbar-list">
+        <li>
+          <h1>
+            <Link to={"/"} className="link goalrush-title">
+              GoalRush
+            </Link>
+          </h1>
+        </li>
+        <div className="navbar-center-items">
+          <li>
+            <Link to={"/home"} className="link">
+              HOME
+            </Link>
+          </li>
+          <li>
+            <Link to={"/blogs"} className="link">
+              BLOGS
+            </Link>
+          </li>
+          <li>
+            <Link to={"/matches"} className="link">
+              MATCHES
+            </Link>
+          </li>
+          <li>
+            <Link to={"/news"} className="link">
+              NEWS
+            </Link>
+          </li>
+          {currentUser && (
+            <li>
+              <Link to={"/create"} className="link">
+                CREATE
+              </Link>
+            </li>
+          )}
+        </div>
+        {!currentUser && (
+          <li>
+            <Link to={"/signin"} className="link signin-link">
+              SIGN IN
+            </Link>
+          </li>
+        )}
+      </ul>
     </nav>
   );
 }

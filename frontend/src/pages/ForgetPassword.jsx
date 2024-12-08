@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
 
 export default function ForgetPassword() {
   const navigate = useNavigate();
@@ -7,13 +8,17 @@ export default function ForgetPassword() {
   const [isCodeSent, setIsCodeSent] = React.useState(false);
   const [recoveryCode, setRecoveryCode] = React.useState(null);
   const [error, setError] = React.useState(false);
-  const recoveryCodeRef = React.useRef(null);
+  const recoveryCodeRef = useRef(null);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
   };
 
   const sendCode = async () => {
+    if (email === "") {
+      setError("Enter your email");
+      return;
+    }
     const recoveryCode = Math.floor(Math.random() * 9000 + 1000);
     // send email
     // then just check if code=recoverycode, if true navigate to reset pw
@@ -40,11 +45,22 @@ export default function ForgetPassword() {
     }
   };
 
-  const submitRecoveryCode = () => {
+  const submitRecoveryCode = async () => {
     if (recoveryCode == recoveryCodeRef.current.value) {
+      // generate new recovery token from backend everytime and get it here
+      const res = await fetch(`/api/auth/addtoken/${email}`, {
+        method: "PUT",
+      });
+      const result = await res.json();
+      const token = result.token;
       // send the email to the backend, generate complex random token in backend and save it to database, return that token and navigate to the route
       // check if user with that token exists, if not return invalid
-      navigate("/changePassword");
+      // reset token in every request
+      navigate(`/changepassword`, { state: { token } });
+      return;
+    } else {
+      setError("Recovery code is incorrect. Retry.");
+      return;
     }
   };
 
@@ -68,7 +84,7 @@ export default function ForgetPassword() {
             <input
               type="number"
               id="recoveryCode"
-              useRef={recoveryCodeRef}
+              ref={recoveryCodeRef}
               required
             />
             <button onClick={submitRecoveryCode}>Recover Account</button>

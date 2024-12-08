@@ -135,7 +135,7 @@ export default function Profile() {
       <Navbar />
       <div className="profile">
         <h1>
-          Welcome to your profile: <b>{userData.username}</b>
+          Welcome to your profile: <b>{userData && userData.username}</b>
         </h1>
         <div>You can make changes to your profile if you wish to.</div>
         <div className="avatar-field">

@@ -4,7 +4,7 @@
 }
 
 .signin {
-  background-color: rgb(233, 238, 217);
+  background-color: #5c7f95;
   height: 100vh;
   display: flex;
   align-items: center;
@@ -12,29 +12,30 @@
 }
 
 .signin-form {
-  border: 1px solid;
+  background-color: white;
+  border: none;
   display: flex;
   flex-direction: column;
   width: 400px;
   min-width: 200px;
-  padding: 20px;
-  gap: 2rem;
+  padding: 40px;
+  gap: 1rem;
   border-radius: 12px;
+  box-shadow: 0 4px 8px 0 rgba(23, 22, 22, 0.2), 0 6px 20px 0 rgba(24, 23, 23, 0.19);
 }
 
 .signin-title {
-  margin-bottom: 6px;
   text-align: center;
 }
 
-.phone-input, .password-input {
+.username-input, .password-input {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   font-size: 1.2rem;
 }
 
-.phone-input-field input, .password-input-field {
+.username-input-field , .password-input-field {
   padding: 12px;
   font-size: large;
   border-radius: 6px;
@@ -51,7 +52,8 @@
 }
 
 .signin-button {
-  color: rgb(84, 71, 63);
+  background-color: #658aa1;
+  color: white;
   padding: 12px;
   font-size: larger;
   border-radius: 6px;
@@ -60,4 +62,9 @@
 
 .signin-button:hover {
   cursor: pointer;
+}
+
+.signup-link {
+  color: #2d4b5e;
+  text-decoration: none;
 }

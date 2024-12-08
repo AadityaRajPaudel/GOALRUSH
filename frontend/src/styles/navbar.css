@@ -3,37 +3,45 @@
   top: 0;
   display: flex;
   justify-content: space-between;
-  padding: 16px;
+  padding: 18px;
   border: 1px solid;
-  background-color: rgb(203, 210, 164);
+  background-color: #141A28;
 }
 
-.nav-items {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  font-size: larger;
-}
-
-.goalrush-title {
-  font-size: 1.8rem;
-  font-weight: bolder;
-}
-
-.goal-text {
-  color: rgb(154, 126, 111);
-}
-
-.rush-text {
-  color: rgb(84, 71, 63);
+ul {
+  list-style-type: none;
 }
 
 .link {
+  color: white;
   text-decoration: none;
-  color: rgb(84, 71, 63);
-  transition: color 0.2s;
 }
 
-.link:hover {
-  color: rgb(0, 0, 0);
+.goalrush-title{
+  font-weight: bold;
+  font-style: italic;
+}
+
+.signin-link {
+  color: black;
+  background-color: white;
+  font-style: italic;
+  font-size: smaller;
+  font-weight: 600;
+  padding: 8px;
+  border-radius: 16px;
+}
+
+.navbar-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.navbar-center-items {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 400px;
 }

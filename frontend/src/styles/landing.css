@@ -1,0 +1,71 @@
+.landing-page {
+  background: rgb(136,181,233);
+background: radial-gradient(circle, rgb(51, 93, 141) 0%, #26314A 58%);
+  height: 91vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-text {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  max-width: 440px;
+}
+
+.get-started {
+  background-color: #53AA51;
+  border: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 32px;
+  padding-right: 32px;
+  color: white;
+  border-radius: 22px;
+  font-size: 1rem;
+}
+
+.landing-text-more {
+  color: white;
+}
+
+.link{
+  text-decoration: none;
+}
+
+.signin-signup {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.signin-signup button {
+  background-color: rgb(151, 56, 56);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 32px;
+  padding-right: 32px;
+  border: none;
+  border-radius: 16px;
+  font-weight: 600;
+}
+
+
+/* .landing-image1 img {
+  position: absolute;
+  left: 0;
+  top: 120px;
+  width: 440px;
+  height: 600px;
+}
+.landing-image2 img {
+  position: absolute;
+  right: 0;
+  top: 120px;
+  width: 440px;
+  height: 600px;
+} */

@@ -9,6 +9,7 @@ import {
   signInStart,
   signInSuccess,
 } from "../redux/user/userSlice";
+import OAuth from "../components/OAuth";
 
 export default function Signin() {
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ export default function Signin() {
       <Navbar className="navbar-imported" />
       <div className="signin">
         <form className="signin-form">
-          <h1 className="signin-title">Sign In</h1>
+          <h1 className="signin-title">SIGN IN</h1>
           <hr />
           <div className="username-input">
             <label htmlFor="username">Enter Username:</label>
@@ -94,10 +95,12 @@ export default function Signin() {
           <button className="signin-button" onClick={handleSubmit}>
             SIGN IN
           </button>
-          <div>Or Login with GOOGLE</div>
+          <div>
+            Or Login with <OAuth />
+          </div>
           <div>
             Don't have an account?{" "}
-            <Link to={"/signup"} className="link">
+            <Link to={"/signup"} className="signup-link">
               SignUp
             </Link>
           </div>
