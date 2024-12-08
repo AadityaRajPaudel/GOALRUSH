@@ -52,11 +52,35 @@ export const getUserByUsernameDB = async (username) => {
   }
 };
 
+export const getUserByEmailDB = async (email) => {
+  try {
+    const [[result]] = await pool.query("SELECT * FROM users WHERE email=?", [
+      email,
+    ]);
+    return result;
+  } catch (err) {
+    throw errorThrower("Failed to get user by email.");
+  }
+};
+
 export const addUserDB = async (username, password) => {
   try {
     const [result] = await pool.query(
       "INSERT INTO users (username, password) VALUES (?, ?)",
       [username, password]
+    );
+    const newUserid = result.insertId;
+    return getUserByIdDB(newUserid);
+  } catch (err) {
+    throw errorThrower("Problem adding user to database.");
+  }
+};
+
+export const createGoogleUser = async (username, password, email, avatar) => {
+  try {
+    const [result] = await pool.query(
+      "INSERT INTO users (username, password, email, avatar) VALUES (?, ?, ?, ?)",
+      [username, password, email, avatar]
     );
     const newUserid = result.insertId;
     return getUserByIdDB(newUserid);
@@ -88,11 +112,11 @@ export const updateUserDB = async (userid, username, avatar, password = "") => {
 
 export const addUserEmailDB = async (userid, email) => {
   try {
-    await pool.query("UPDATE users SET email=? WHERE userid=?", [
+    const result = await pool.query("UPDATE users SET email=? WHERE userid=?", [
       email,
       userid,
     ]);
-    return "Email added successfully";
+    return result;
   } catch (err) {
     throw errorThrower("Failed to add email.");
   }
@@ -308,5 +332,38 @@ export const getCommentsDB = async (postid) => {
     return commentsWithUserDetails;
   } catch (err) {
     throw errorThrower("Failed to fetch comments.");
+  }
+};
+
+export const addTokenDB = async (email, randomToken) => {
+  try {
+    await pool.query("UPDATE users SET recovery_token=? WHERE email=?", [
+      randomToken,
+      email,
+    ]);
+    return "Token added successfully";
+  } catch (err) {
+    throw errorThrower("Failed to add token.");
+  }
+};
+
+export const checkTokenExistsDB = async (token) => {
+  try {
+    await pool.query("SELECT users WHERE recovery_token=?", [token]);
+    return "Token exists";
+  } catch (err) {
+    throw errorThrower("Token doesnt exist.");
+  }
+};
+
+export const updatePasswordDB = async (token, password) => {
+  try {
+    await pool.query("UPDATE users SET password=? WHERE recovery_token=?", [
+      password,
+      token,
+    ]);
+    return "Password updated successfully";
+  } catch (err) {
+    throw errorThrower("Cannot update password from db");
   }
 };

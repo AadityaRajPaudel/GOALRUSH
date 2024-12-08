@@ -1,9 +1,14 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {
+  addTokenDB,
   addUserDB,
   addUserEmailDB,
+  checkTokenExistsDB,
+  createGoogleUser,
+  getUserByEmailDB,
   getUserByUsernameDB,
+  updatePasswordDB,
   updateUserDB,
 } from "../database.js";
 import { errorThrower } from "../utils/errorThrower.js";
@@ -116,5 +121,91 @@ export const logoutUser = (req, res) => {
       });
   } catch (err) {
     res.json(errorThrower("Failed to logout user"));
+  }
+};
+
+export const addToken = async (req, res) => {
+  try {
+    const email = req.params.email;
+    const randomToken = bcrypt.hashSync(email, 10);
+    const result = await addTokenDB(email, randomToken);
+    res.status(200).json({
+      success: true,
+      token: randomToken,
+    });
+  } catch (err) {
+    res
+      .status(404)
+      .json(errorThrower("Failed to generate and add token." + err));
+  }
+};
+
+export const verifyToken = async (req, res) => {
+  try {
+    const token = req.body.token;
+    const result = await checkTokenExistsDB(token);
+    res.status(200).json({
+      success: true,
+      message: result,
+    });
+  } catch (err) {
+    res.status(404).json(errorThrower("Failed to verify token."));
+  }
+};
+
+// update password through token, changepassword.jsx
+export const updatePassword = async (req, res) => {
+  try {
+    const token = req.body.token;
+    const { password } = req.body;
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    const result = await updatePasswordDB(token, hashedPassword);
+    res.status(200).json({
+      success: true,
+      message: result,
+    });
+  } catch (err) {
+    res.status(404).json(errorThrower(err));
+  }
+};
+
+export const google = async (req, res) => {
+  const { username, email, avatar } = req.body;
+  try {
+    const result = await getUserByEmailDB(email);
+    if (result) {
+      const token = jwt.sign({ id: result.userid }, process.env.JWT_SECRET_KEY);
+      const { password: pass, ...rest } = result;
+      res
+        .status(200)
+        .cookie("access_token", token, {
+          httpOnly: true,
+        })
+        .json({
+          success: true,
+          message: rest,
+        });
+    } else {
+      const randomPassword = Math.floor(Math.random() * 9000 + 1000).toString();
+      const hashedPassword = bcrypt.hashSync(randomPassword, 10);
+      // create new user with the email, username, avatar, and password
+      const newUser = await createGoogleUser(
+        username,
+        hashedPassword,
+        email,
+        avatar
+      );
+      const token = jwt.sign(
+        { id: newUser.userid },
+        process.env.JWT_SECRET_KEY
+      );
+      const { password: pass, ...rest } = newUser;
+      res.status(200).cookie("access_token", token, { httpOnly: true }).json({
+        success: true,
+        message: rest,
+      });
+    }
+  } catch (err) {
+    res.status(404).json(err);
   }
 };
