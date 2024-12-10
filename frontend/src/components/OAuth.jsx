@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { app } from "../../firebase.js";
+import GoogleButton from "react-google-button";
 import {
   GoogleAuthProvider,
   getAuth,
@@ -50,8 +51,12 @@ export default function OAuth() {
   };
 
   return (
-    <div>
-      <button onClick={handleGoogleLogin}>Google</button>
+    <div
+      style={{
+        display: "inline-block",
+      }}
+    >
+      <GoogleButton onClick={handleGoogleLogin} />
     </div>
   );
 }

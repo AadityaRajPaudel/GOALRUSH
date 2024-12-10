@@ -84,19 +84,26 @@ export default function Signin() {
               type={showPassword ? "text" : "password"}
               className="password-input-field"
               onChange={handleChange}
+              placeholder="@#$%^&"
             />
-            <span
-              className="show-password"
-              onClick={() => setShowPassword((prev) => !prev)}
-            >
-              {!showPassword ? "Show" : "Hide"} password
-            </span>
+            <div className="show-password">
+              <button
+                className="show-password-button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowPassword((prev) => !prev);
+                }}
+              >
+                {!showPassword ? "Show" : "Hide"} password
+              </button>
+            </div>
           </div>
           <button className="signin-button" onClick={handleSubmit}>
             SIGN IN
           </button>
+          <hr />
           <div>
-            Or Login with <OAuth />
+            OR: <OAuth />
           </div>
           <div>
             Don't have an account?{" "}
@@ -105,7 +112,12 @@ export default function Signin() {
             </Link>
           </div>
           <div>
-            <button onClick={handleForgetPassword}>Forgot Password?</button>
+            <button
+              onClick={handleForgetPassword}
+              className="forget-password-button"
+            >
+              Forgot Password?
+            </button>
           </div>
         </form>
       </div>
