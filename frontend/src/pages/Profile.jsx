@@ -9,6 +9,7 @@ import {
 } from "../redux/user/userSlice.js";
 import "../styles/profile.css";
 import Post from "./Post.jsx";
+import { useRef } from "react";
 
 export default function Profile() {
   const userData = useSelector((state) => state.user.currentUser);
@@ -18,8 +19,12 @@ export default function Profile() {
   const [error, setError] = React.useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const fileRef = useRef(null);
 
   useEffect(() => {
+    if (!userData) {
+      navigate("/signin");
+    }
     // fetch posts for the current user only
     const fetchPosts = async () => {
       try {
@@ -131,48 +136,69 @@ export default function Profile() {
   };
 
   return (
-    <div>
+    <div className="profile-container">
       <Navbar />
+
+      {/* Navbar pachi ko div */}
       <div className="profile">
-        <h1>
-          Welcome to your profile: <b>{userData && userData.username}</b>
-        </h1>
-        <div>You can make changes to your profile if you wish to.</div>
-        <div className="avatar-field">
-          <img src={formdata.avatar} alt="Avatar" />
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-        </div>
-        <div className="username-field">
-          <label htmlFor="username">Username:</label>
-          <input
-            id="username"
-            type="text"
-            className="username-input-field"
-            onChange={handleChange}
-            value={formdata.username}
-          />
-        </div>
-        <div className="password-field">
-          <label htmlFor="password">New Password:</label>
-          <input
-            id="password"
-            type="password"
-            className="password-input-field"
-            placeholder="Leave empty to keep it unchanged"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <button onClick={handleSubmit}>Update Profile</button>:
-        </div>
-        {error && <div>{error}</div>}
-        {userPosts.length > 0 ? (
-          <div>{userPosts}</div>
-        ) : (
+        <div className="profile-details">
           <div>
-            You have no posts added. Create posts to see all your posts here.
+            <img
+              src={formdata.avatar}
+              alt="avatar"
+              className="avatar"
+              onClick={() => fileRef.current.click()}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              ref={fileRef}
+              style={{
+                display: "none",
+              }}
+            />
+            <button onClick={() => fileRef.current.click()}>
+              Update Profile Picture
+            </button>
           </div>
-        )}
+          <div>{userData.username}</div>
+          <div>Total Posts: {userPosts.length}</div>
+          <div>Joined in: {new Date(userData.createdat).toLocaleString()}</div>
+        </div>
+        <div className="profile-update">
+          <h1 className="profile-update-header">UPDATE PROFILE</h1>
+          <div className="username-field">
+            <label htmlFor="username">Update Username:</label>
+            <input
+              type="text"
+              id="username"
+              className="username-input-field"
+              onChange={handleChange}
+              placeholder="Empty for no changes"
+            />
+          </div>
+          <div className="password-field">
+            <label htmlFor="password">Update Password:</label>
+            <input
+              type="password"
+              id="password"
+              className="password-input-field"
+              onChange={handleChange}
+              placeholder="Empty for no changes"
+            />
+          </div>
+          <div>
+            <button onClick={handleSubmit} className="update-profile-button">
+              Update Profile
+            </button>
+          </div>
+          {userPosts.length > 0 ? (
+            <div className="profile-update-images">{userPosts}</div>
+          ) : (
+            <div>Add posts to edit them !</div>
+          )}
+        </div>
       </div>
     </div>
   );

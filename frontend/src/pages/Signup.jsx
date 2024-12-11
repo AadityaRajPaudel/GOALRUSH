@@ -70,12 +70,6 @@ export default function Signup() {
                 placeholder="password"
                 onChange={handleChange}
               />
-              <span
-                className="show-password"
-                onClick={() => setShowPassword((prev) => !prev)}
-              >
-                {!showPassword ? "Hide" : "Show"} password
-              </span>
             </div>
             <div className="password-input">
               <label htmlFor="confirmPassword">Confirm Password:</label>
@@ -100,7 +94,7 @@ export default function Signup() {
           <div>Or Login with GOOGLE</div>
           <div>
             Already have an account?{" "}
-            <Link to={"/signin"} className="link">
+            <Link to={"/signin"} className="signin-from-signup">
               SignIn
             </Link>
           </div>

@@ -153,13 +153,19 @@ export default function Post(props) {
         <img src={props.user.avatar} alt="avatar" className="poster-avatar" />
         <div className="poster-username">{props.user.username}</div>
         <button
+          className="edit-button"
           onClick={() => {
             handlePostEdit(props);
           }}
         >
           Edit
         </button>
-        <button onClick={() => handlePostDelete(props.postid)}>Delete</button>
+        <button
+          className="delete-button"
+          onClick={() => handlePostDelete(props.postid)}
+        >
+          Delete
+        </button>
       </div>
 
       <h2 className="post-title">{props.title}</h2>

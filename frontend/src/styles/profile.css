@@ -1,3 +1,68 @@
-.password-input-field {
-  width: 400px;
+.profile-container {
+  background: rgb(136,181,233);
+background: radial-gradient(circle, rgba(136,181,233,1) 0%, rgba(23,78,87,1) 60%);
+}
+
+.profile {
+  display: flex;
+  gap: 1rem;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  width: 340px;
+  border-right: 1px solid rgb(202, 200, 200);
+  padding: 12px;
+  color: white;
+}
+
+.profile-update {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.avatar {
+  width: 100%;
+  height: auto;
+}
+
+.avatar:hover {
+  cursor: pointer;
+}
+
+.profile-update-header {
+  color: white;
+  text-align: center;
+  padding: 8px;
+}
+
+.username-field, .password-field {
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+.username-input-field, .password-input-field {
+  max-width: 400px;
+}
+
+.update-profile-button {
+  background-color: #141a28;
+  color: white;
+  font-weight: 600;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid white;
+  transition: background-color 0.2s, color 0.2s, border 0.2s;
+}
+
+.update-profile-button:hover {
+  background-color: white;
+  color: #141a28;
+  border: 1px solid #141a28;
+  cursor: pointer;
 }

@@ -69,7 +69,11 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        backgroundColor: "#658aa1",
+      }}
+    >
       <Navbar />
       {currentUser && currentUser.username && !currentUser.email && (
         <div>
@@ -91,11 +95,7 @@ export default function Home() {
         </div>
       )}
       <div></div>
-      {posts &&
-        posts.length > 0 &&
-        posts.map((post) => {
-          return <div>{posts}</div>;
-        })}
+      {posts && posts.length > 0 && <div>{posts}</div>}
     </div>
   );
 }

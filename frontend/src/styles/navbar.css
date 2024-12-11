@@ -6,6 +6,7 @@
   padding: 18px;
   border: 1px solid;
   background-color: #141A28;
+  z-index: 1;
 }
 
 ul {

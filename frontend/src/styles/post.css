@@ -1,141 +1,174 @@
 .post-card {
-  max-width: 600px;
-  margin: 20px auto;
+  background-color: white;
   padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial', sans-serif;
-  color: #333;
+  margin: 20px 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px 0 rgba(23, 22, 22, 0.2), 0 6px 20px 0 rgba(24, 23, 23, 0.19);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 480px;
 }
+
+
 
 .poster-details {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  gap: 15px;
+  font-size: 1rem;
 }
 
 .poster-avatar {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  margin-right: 10px;
 }
 
 .poster-username {
   font-weight: bold;
-  font-size: 1.1rem;
+}
+
+.edit-button,
+.delete-button {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.edit-button {
+  background-color: #658aa1;
+  color: white;
+  border: 1px solid #658aa1;
+}
+
+.edit-button:hover {
+  background-color: white;
+  color: #658aa1;
+  border: 1px solid #658aa1;
+}
+
+.delete-button {
+  background-color: red;
+  color: white;
+  border: 1px solid red;
+}
+
+.delete-button:hover {
+  background-color: white;
+  color: red;
+  border: 1px solid red;
 }
 
 .post-title {
-  font-size: 1.5rem;
-  margin: 10px 0;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #2d4b5e;
 }
 
 .post-content {
   font-size: 1rem;
-  line-height: 1.5;
-  margin-bottom: 10px;
+  color: #555;
 }
 
 .post-date {
   font-size: 0.9rem;
   color: #777;
-  margin-bottom: 15px;
 }
 
 .post-images {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 15px;
 }
 
 .post-image {
   width: 100px;
   height: 100px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 .post-actions {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
 }
 
 .like-button {
-  background-color: #007bff;
-  color: #fff;
+  background-color: #658aa1;
+  color: white;
   padding: 8px 12px;
+  border-radius: 6px;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
-  font-size: 0.9rem;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .like-button.liked {
-  background-color: #28a745;
+  background-color: red;
 }
 
 .like-button:hover {
-  opacity: 0.9;
+  background-color: white;
+  color: #658aa1;
+  border: 1px solid #658aa1;
 }
 
 .likes-count {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #555;
 }
 
 .post-comments {
-  margin-top: 20px;
+  font-size: 1rem;
+  color: #555;
 }
 
 .comment {
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 10px;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
 }
 
 .comment-avatar {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  margin-right: 10px;
 }
 
 .comment-content {
-  background-color: #f0ecec;
-  padding: 8px 12px;
-  border-radius: 4px;
-}
-
-.comment-content strong {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 5px;
+  flex: 1;
 }
 
 .add-comment {
   display: flex;
-  align-items: center;
   gap: 10px;
   margin-top: 15px;
 }
 
 .add-comment input {
-  flex: 1;
   padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 .add-comment button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
+  background-color: #658aa1;
+  color: white;
   padding: 8px 12px;
-  border-radius: 4px;
+  border-radius: 6px;
+  border: none;
   cursor: pointer;
+}
+
+.add-comment button:hover {
+  background-color: white;
+  color: #658aa1;
+  border: 1px solid #658aa1;
 }

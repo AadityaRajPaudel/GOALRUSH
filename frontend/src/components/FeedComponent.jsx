@@ -1,5 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 
 export default function FeedComponent(props) {
   const userdata = useSelector((state) => state.user.currentUser);
@@ -113,7 +115,7 @@ export default function FeedComponent(props) {
           Posted on: {new Date(props.createdat).toLocaleString()}
         </p>
 
-        {props.images && props.images.length > 0 && (
+        {/* {props.images && props.images.length > 0 && (
           <div className="post-images">
             {props.images.map((image) => (
               <img
@@ -123,6 +125,25 @@ export default function FeedComponent(props) {
                 className="post-image"
               />
             ))}
+          </div>
+        )} */}
+        {props.images && props.images.length > 0 && (
+          <div>
+            <Swiper spaceBetween={50}>
+              {props.images.map((image) => (
+                <SwiperSlide>
+                  <img
+                    src={image.imageurl}
+                    alt="image"
+                    style={{
+                      height: "auto",
+                      width: "100%",
+                      zIndex: "-1",
+                    }}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         )}
 
@@ -134,6 +155,9 @@ export default function FeedComponent(props) {
             {isLiked ? "Unlike" : "Like"}
           </button>
           <span className="likes-count">{likes} likes</span>
+          {props.userid !== userdata.userid && (
+            <button className="share-button">Share</button>
+          )}
         </div>
 
         <div className="post-comments">

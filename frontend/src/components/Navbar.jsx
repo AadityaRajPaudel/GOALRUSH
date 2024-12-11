@@ -38,39 +38,6 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      {/* <h1 className="goalrush-title">
-        <Link to={"/"} className="link">
-          <div>
-            <span className="goal-text">Goal</span>
-            <span className="rush-text">Rush</span>
-          </div>
-        </Link>
-      </h1>
-      <div className="nav-items">
-        {currentUser && (
-          <Link to={"/home"} className="link">
-            <div>Home</div>
-          </Link>
-        )}
-        {currentUser && (
-          <Link to={`/profile`} className="link">
-            <div>Profile</div>
-          </Link>
-        )}
-        {currentUser && (
-          <Link to={"/create"} className="link">
-            <div>Create</div>
-          </Link>
-        )}
-        {currentUser ? (
-          <div onClick={handleLogout}>Logout</div>
-        ) : (
-          <Link to={"/signin"} className="link">
-            <div>Sign-In</div>
-          </Link>
-        )}
-      </div> */}
-
       <ul className="navbar-list">
         <li>
           <h1>
@@ -83,11 +50,6 @@ export default function Navbar() {
           <li>
             <Link to={"/home"} className="link">
               HOME
-            </Link>
-          </li>
-          <li>
-            <Link to={"/blogs"} className="link">
-              BLOGS
             </Link>
           </li>
           <li>
@@ -104,6 +66,13 @@ export default function Navbar() {
             <li>
               <Link to={"/create"} className="link">
                 CREATE
+              </Link>
+            </li>
+          )}
+          {currentUser && (
+            <li>
+              <Link to={"/profile"} className="link">
+                Profile
               </Link>
             </li>
           )}
