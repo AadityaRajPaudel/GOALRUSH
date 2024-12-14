@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import "../styles/changepassword.css";
 
 export default function ChangePassword() {
   const navigate = useNavigate();
@@ -75,22 +76,39 @@ export default function ChangePassword() {
   };
 
   return (
-    <div>
-      <div>
-        <label htmlFor="password">New Password</label>
-        <input type="password" required id="password" onChange={handleChange} />
-      </div>
-      <div>
-        <label htmlFor="confirmPassword">Re-Enter Password</label>
-        <input
-          type="password"
-          required
-          id="confirmPassword"
-          onChange={handleChange}
-        />
-      </div>
-      <button onClick={handleSubmit}>Change Password</button>
-      <div>{token} token</div>
+    <div className="change-password-container">
+      <form className="change-password-form" onSubmit={handleSubmit}>
+        <h2 className="change-password-title">Change Password</h2>
+        <div className="password-field">
+          <label htmlFor="password" className="password-label">
+            New Password
+          </label>
+          <input
+            type="password"
+            required
+            id="password"
+            className="password-input"
+            onChange={handleChange}
+            placeholder="Enter your new password"
+          />
+        </div>
+        <div className="password-field">
+          <label htmlFor="confirmPassword" className="password-label">
+            Re-Enter Password
+          </label>
+          <input
+            type="password"
+            required
+            id="confirmPassword"
+            className="password-input"
+            onChange={handleChange}
+            placeholder="Re-enter your new password"
+          />
+        </div>
+        <button type="submit" className="change-password-button">
+          Change Password
+        </button>
+      </form>
     </div>
   );
 }

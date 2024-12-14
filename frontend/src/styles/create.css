@@ -1,0 +1,19 @@
+.create {
+    margin: 0 auto;
+    padding: 20px;
+    height: 100vh;
+    background-image:
+      url("https://res.cloudinary.com/drtiwkyvj/image/upload/v1734195815/d6xtneu9s1wt2ktyyffp.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: right bottom;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    color: white;
+    min-width: 400px;
+}
+
+.form {
+  min-width: 450px;
+}

@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
+import "../styles/forgetpassword.css";
 
 export default function ForgetPassword() {
   const navigate = useNavigate();
@@ -65,32 +66,50 @@ export default function ForgetPassword() {
   };
 
   return (
-    <div>
-      <div>
-        <label htmlFor="email">Enter your account's email address</label>
-        <input
-          id="email"
-          type="email"
-          placeholder="you@example.com"
-          onChange={handleEmailChange}
-          required
-        />
-        <button onClick={sendCode}>Send Code</button>
+    <div className="account-recovery-container">
+      <form
+        className="account-recovery-form"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        <h2 className="account-recovery-title">Recover Your Account</h2>
+        <div className="email-field">
+          <label htmlFor="email" className="email-label">
+            Enter your account's email address
+          </label>
+          <input
+            id="email"
+            type="email"
+            className="email-input"
+            placeholder="you@example.com"
+            onChange={handleEmailChange}
+            required
+          />
+          <button type="button" onClick={sendCode} className="send-code-button">
+            Send Code
+          </button>
+        </div>
         {isCodeSent && (
-          <div>
-            <label htmlFor="recoveryCode">
+          <div className="recovery-code-field">
+            <label htmlFor="recoveryCode" className="recovery-code-label">
               Enter the code from your email:
             </label>
             <input
               type="number"
               id="recoveryCode"
               ref={recoveryCodeRef}
+              className="recovery-code-input"
               required
             />
-            <button onClick={submitRecoveryCode}>Recover Account</button>
+            <button
+              type="button"
+              onClick={submitRecoveryCode}
+              className="recover-account-button"
+            >
+              Recover Account
+            </button>
           </div>
         )}
-      </div>
+      </form>
     </div>
   );
 }

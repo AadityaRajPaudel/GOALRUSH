@@ -10,6 +10,7 @@ import {
   updateUserStart,
   updateUserSuccess,
 } from "../redux/user/userSlice.js";
+import "../styles/home.css";
 
 export default function Home() {
   const { currentUser } = useSelector((state) => state.user);
@@ -69,33 +70,35 @@ export default function Home() {
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: "#658aa1",
-      }}
-    >
+    <div className="home-component">
+      <img
+        src="https://png.pngtree.com/element_our/png/20180913/excluesive-vector-european-club-football-thophy-ucl-png_100625.jpg"
+        alt="ucl"
+        className="ucl"
+      />
       <Navbar />
-      {currentUser && currentUser.username && !currentUser.email && (
-        <div>
+      <div className="home-main">
+        {currentUser && currentUser.username && !currentUser.email && (
           <div>
-            You have not entered your email. To make sure you can reset your
-            account in case you forget your password, please enter your email
-            here.
+            <div>
+              You have not entered your email. To make sure you can reset your
+              account in case you forget your password, please enter your email
+              here.
+            </div>
+            <div>
+              <input
+                type="email"
+                id="email"
+                placeholder="you@example.com"
+                onChange={handleChange}
+                required
+              />
+              <button onClick={handleEmailSubmit}>Submit</button>
+            </div>
           </div>
-          <div>
-            <input
-              type="email"
-              id="email"
-              placeholder="you@example.com"
-              onChange={handleChange}
-              required
-            />
-            <button onClick={handleEmailSubmit}>Submit</button>
-          </div>
-        </div>
-      )}
-      <div></div>
-      {posts && posts.length > 0 && <div>{posts}</div>}
+        )}
+        {posts && posts.length > 0 && <div>{posts}</div>}
+      </div>
     </div>
   );
 }

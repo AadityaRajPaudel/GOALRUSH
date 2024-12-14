@@ -1,6 +1,7 @@
 .profile-container {
   background: rgb(136,181,233);
 background: radial-gradient(circle, rgba(136,181,233,1) 0%, rgba(23,78,87,1) 60%);
+min-height: 100vh;
 }
 
 .profile {

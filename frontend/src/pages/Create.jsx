@@ -11,6 +11,8 @@ import {
   uploadBytesResumable,
   uploadBytes,
 } from "firebase/storage";
+import { deleteUserSuccess } from "../redux/user/userSlice.js";
+import "../styles/create.css";
 
 export default function Create() {
   const navigate = useNavigate();
@@ -23,7 +25,32 @@ export default function Create() {
     title: "",
     content: "",
     images: [],
-    userid: userState.currentUser.userid,
+  });
+
+  React.useEffect(() => {
+    if (!userState) {
+      console.log("navigate");
+      navigate("/signin");
+    }
+  }, []);
+
+  React.useEffect(() => {
+    const checkUserLogin = async () => {
+      const res = await fetch("/api/auth/checkuserlogintoken", {
+        method: "GET",
+        credentials: "include",
+      });
+      const result = await res.json();
+      console.log(result);
+      if (result.success === false) {
+        console.log(result);
+        dispatch(deleteUserSuccess());
+        navigate("/signin");
+        return;
+      }
+      return;
+    };
+    checkUserLogin();
   });
 
   // handle title and content change
@@ -31,6 +58,7 @@ export default function Create() {
     setFormData((prevFormData) => {
       return {
         ...prevFormData,
+        userid: userState.currentUser.userid,
         [e.target.id]: e.target.value,
       };
     });
@@ -126,85 +154,88 @@ export default function Create() {
   return (
     <div>
       <Navbar />
-      <div style={{ maxWidth: "600px", margin: "0 auto", padding: "20px" }}>
-        <h1>Create a Post</h1>
-        <form onSubmit={handleSubmit}>
-          {/* Title Input */}
-          <div style={{ marginBottom: "15px" }}>
-            <label htmlFor="title">
-              <strong>Title:</strong>
-            </label>
-            <input
-              type="text"
-              id="title"
-              value={formData.title}
-              onChange={handleChange}
-              placeholder="Enter your post title"
+      <div className="create">
+        <div className="form">
+          <h1 style={{ color: "white" }}>Create a Post</h1>
+          <form onSubmit={handleSubmit}>
+            {/* Title Input */}
+            <div style={{ marginBottom: "15px" }}>
+              <label htmlFor="title">
+                <strong>Title:</strong>
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Enter your post title"
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  margin: "5px 0",
+                  borderRadius: "4px",
+                  border: "1px solid #ccc",
+                  opacity: "0.6",
+                }}
+              />
+            </div>
+
+            {/* Content Input */}
+            <div style={{ marginBottom: "15px" }}>
+              <label htmlFor="content">
+                <strong>Content:</strong>
+              </label>
+              <textarea
+                id="content"
+                value={formData.content}
+                onChange={handleChange}
+                placeholder="Write your content here"
+                rows="5"
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  margin: "5px 0",
+                  borderRadius: "4px",
+                  border: "1px solid #ccc",
+                  opacity: "0.6",
+                }}
+              ></textarea>
+            </div>
+
+            {/* Image Upload */}
+            <div style={{ marginBottom: "15px" }}>
+              <label htmlFor="images">
+                <strong>Images:</strong>
+              </label>
+              <input
+                id="images"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => {
+                  setFiles(e.target.files);
+                }}
+                style={{ display: "block", margin: "5px 0" }}
+              />
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
               style={{
-                width: "100%",
-                padding: "10px",
-                margin: "5px 0",
+                backgroundColor: "#007BFF",
+                color: "#fff",
+                padding: "10px 20px",
+                border: "none",
                 borderRadius: "4px",
-                border: "1px solid #ccc",
+                cursor: "pointer",
               }}
-            />
-          </div>
-
-          {/* Content Input */}
-          <div style={{ marginBottom: "15px" }}>
-            <label htmlFor="content">
-              <strong>Content:</strong>
-            </label>
-            <textarea
-              id="content"
-              value={formData.content}
-              onChange={handleChange}
-              placeholder="Write your content here"
-              rows="5"
-              style={{
-                width: "100%",
-                padding: "10px",
-                margin: "5px 0",
-                borderRadius: "4px",
-                border: "1px solid #ccc",
-              }}
-            ></textarea>
-          </div>
-
-          {/* Image Upload */}
-          <div style={{ marginBottom: "15px" }}>
-            <label htmlFor="images">
-              <strong>Images:</strong>
-              (Only Upload 3 images max.)
-            </label>
-            <input
-              id="images"
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={(e) => {
-                setFiles(e.target.files);
-              }}
-              style={{ display: "block", margin: "5px 0" }}
-            />
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            style={{
-              backgroundColor: "#007BFF",
-              color: "#fff",
-              padding: "10px 20px",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            {loading ? "Loading.." : "Create Post"}
-          </button>
-          {error && <div>{error}</div>}
-        </form>
+            >
+              {loading ? "Loading.." : "Create Post"}
+            </button>
+            {error && <div>{error}</div>}
+          </form>
+        </div>
       </div>
     </div>
   );

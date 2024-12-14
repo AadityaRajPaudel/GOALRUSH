@@ -72,16 +72,30 @@ export default function Navbar() {
           {currentUser && (
             <li>
               <Link to={"/profile"} className="link">
-                Profile
+                <img
+                  src={currentUser.avatar}
+                  alt="avatar"
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "20px",
+                  }}
+                />
               </Link>
             </li>
           )}
         </div>
-        {!currentUser && (
+        {!currentUser ? (
           <li>
             <Link to={"/signin"} className="link signin-link">
               SIGN IN
             </Link>
+          </li>
+        ) : (
+          <li>
+            <button onClick={handleLogout} className="logout-button">
+              LOGOUT
+            </button>
           </li>
         )}
       </ul>

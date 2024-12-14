@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import "../styles/updatepost.css";
 
 export default function UpdatePost() {
   const navigate = useNavigate();
@@ -138,53 +139,80 @@ export default function UpdatePost() {
   };
 
   return (
-    <div>
-      <h1>Update your post</h1>
-      <div>
-        <label htmlFor="title">Title</label>
-        <input
-          type="text"
-          id="title"
-          value={post.title || ""}
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <label htmlFor="content">Content</label>
-        <textarea
-          id="content"
-          value={post.content || ""}
-          onChange={handleChange}
-        />
-      </div>
-      {post.images &&
-        post.images.length > 0 &&
-        post.images.map((image) => {
-          return (
-            <div key={image.imageid}>
-              <div>
-                <img src={image.imageurl} alt="image" />
+    <div className="update-post-container">
+      <form className="update-post-form" onSubmit={(e) => e.preventDefault()}>
+        <h1 className="update-post-title">Update Your Post</h1>
+
+        <div className="field">
+          <label htmlFor="title" className="field-label">
+            Title
+          </label>
+          <input
+            type="text"
+            id="title"
+            className="field-input"
+            value={post.title || ""}
+            onChange={handleChange}
+            placeholder="Enter post title"
+            required
+          />
+        </div>
+
+        <div className="field">
+          <label htmlFor="content" className="field-label">
+            Content
+          </label>
+          <textarea
+            id="content"
+            className="field-textarea"
+            value={post.content || ""}
+            onChange={handleChange}
+            placeholder="Write your post content here..."
+            required
+          ></textarea>
+        </div>
+
+        {post.images && post.images.length > 0 && (
+          <div className="image-preview">
+            {post.images.map((image) => (
+              <div className="image-container" key={image.imageid}>
+                <img src={image.imageurl} alt="post-image" className="image" />
+                <button
+                  type="button"
+                  className="delete-image-button"
+                  onClick={(e) => handleImageDelete(e, image.imageid)}
+                >
+                  Delete
+                </button>
               </div>
-              <button onClick={(e) => handleImageDelete(e, image.imageid)}>
-                Delete
-              </button>
-            </div>
-          );
-        })}
-      <div>
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={(e) => {
-            setFiles(e.target.files);
-          }}
-        />
-      </div>
-      <button onClick={(e) => updatePost(e)}>
-        {loading ? "Updating..." : "Update Post"}
-      </button>
-      {error && <div>{error}</div>}
+            ))}
+          </div>
+        )}
+
+        <div className="file-upload">
+          <label htmlFor="images" className="file-upload-label">
+            Add More Images
+          </label>
+          <input
+            type="file"
+            id="images"
+            accept="image/*"
+            multiple
+            onChange={(e) => setFiles(e.target.files)}
+            className="file-input"
+          />
+        </div>
+
+        <button
+          type="button"
+          className="update-post-button"
+          onClick={(e) => updatePost(e)}
+        >
+          {loading ? "Updating..." : "Update Post"}
+        </button>
+
+        {error && <div className="error-message">{error}</div>}
+      </form>
     </div>
   );
 }

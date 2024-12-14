@@ -29,3 +29,15 @@ app.use("/api/posts", postRouter);
 app.use("/api/likes", likesRouter);
 app.use("/api/comments", commentsRouter);
 app.use("/api/news", newsRouter);
+
+// global error handling middleware that handles error (use case: verify user login token)
+// global error handler middleware to catch and handle errors
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+  return res.status(statusCode).json({
+    success: false,
+    statusCode,
+    message,
+  });
+});

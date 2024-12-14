@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar.jsx";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
+  deleteUserSuccess,
   updateUserFailure,
   updateUserStart,
   updateUserSuccess,
@@ -22,9 +23,6 @@ export default function Profile() {
   const fileRef = useRef(null);
 
   useEffect(() => {
-    if (!userData) {
-      navigate("/signin");
-    }
     // fetch posts for the current user only
     const fetchPosts = async () => {
       try {
@@ -45,6 +43,32 @@ export default function Profile() {
       }
     };
     fetchPosts();
+  }, []);
+
+  React.useEffect(() => {
+    if (!userData || !formdata) {
+      console.log("navigate");
+      navigate("/signin");
+    }
+  }, [userData]);
+
+  // check if user is logged in, else redirect to home and dispatch delete user
+  React.useEffect(() => {
+    const checkUserLogin = async () => {
+      const res = await fetch("/api/auth/checkuserlogintoken", {
+        method: "GET",
+        credentials: "include",
+      });
+      const result = await res.json();
+      console.log(result);
+      if (result.success === false) {
+        console.log(result);
+        dispatch(deleteUserSuccess());
+        return;
+      }
+      return;
+    };
+    checkUserLogin();
   }, []);
 
   const handleChange = (e) => {
@@ -140,66 +164,72 @@ export default function Profile() {
       <Navbar />
 
       {/* Navbar pachi ko div */}
-      <div className="profile">
-        <div className="profile-details">
-          <div>
-            <img
-              src={formdata.avatar}
-              alt="avatar"
-              className="avatar"
-              onClick={() => fileRef.current.click()}
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              ref={fileRef}
-              style={{
-                display: "none",
-              }}
-            />
-            <button onClick={() => fileRef.current.click()}>
-              Update Profile Picture
-            </button>
+      {formdata ? (
+        <div className="profile">
+          <div className="profile-details">
+            <div>
+              <img
+                src={formdata.avatar}
+                alt="avatar"
+                className="avatar"
+                onClick={() => fileRef.current.click()}
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                ref={fileRef}
+                style={{
+                  display: "none",
+                }}
+              />
+              <button onClick={() => fileRef.current.click()}>
+                Update Profile Picture
+              </button>
+            </div>
+            <div>{userData.username}</div>
+            <div>Total Posts: {userPosts.length}</div>
+            <div>
+              Joined on: {new Date(userData.createdat).toLocaleString()}
+            </div>
           </div>
-          <div>{userData.username}</div>
-          <div>Total Posts: {userPosts.length}</div>
-          <div>Joined in: {new Date(userData.createdat).toLocaleString()}</div>
+          <div className="profile-update">
+            <h1 className="profile-update-header">UPDATE PROFILE</h1>
+            <div className="username-field">
+              <label htmlFor="username">Update Username:</label>
+              <input
+                type="text"
+                id="username"
+                className="username-input-field"
+                onChange={handleChange}
+                placeholder="Empty for no changes"
+              />
+            </div>
+            <div className="password-field">
+              <label htmlFor="password">Update Password:</label>
+              <input
+                type="password"
+                id="password"
+                className="password-input-field"
+                onChange={handleChange}
+                placeholder="Empty for no changes"
+              />
+            </div>
+            <div>
+              <button onClick={handleSubmit} className="update-profile-button">
+                Update Profile
+              </button>
+            </div>
+            {userPosts.length > 0 ? (
+              <div className="profile-update-images">{userPosts}</div>
+            ) : (
+              <div>Add posts to edit them !</div>
+            )}
+          </div>
         </div>
-        <div className="profile-update">
-          <h1 className="profile-update-header">UPDATE PROFILE</h1>
-          <div className="username-field">
-            <label htmlFor="username">Update Username:</label>
-            <input
-              type="text"
-              id="username"
-              className="username-input-field"
-              onChange={handleChange}
-              placeholder="Empty for no changes"
-            />
-          </div>
-          <div className="password-field">
-            <label htmlFor="password">Update Password:</label>
-            <input
-              type="password"
-              id="password"
-              className="password-input-field"
-              onChange={handleChange}
-              placeholder="Empty for no changes"
-            />
-          </div>
-          <div>
-            <button onClick={handleSubmit} className="update-profile-button">
-              Update Profile
-            </button>
-          </div>
-          {userPosts.length > 0 ? (
-            <div className="profile-update-images">{userPosts}</div>
-          ) : (
-            <div>Add posts to edit them !</div>
-          )}
-        </div>
-      </div>
+      ) : (
+        <div>Please signin to see your profile</div>
+      )}
     </div>
   );
 }

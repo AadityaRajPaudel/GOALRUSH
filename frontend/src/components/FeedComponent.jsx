@@ -2,19 +2,21 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import "../styles/feedcomponent.css";
 
 export default function FeedComponent(props) {
   const userdata = useSelector((state) => state.user.currentUser);
-  const [formdata, setFormdata] = React.useState({
-    userid: userdata.userid, // default to current user
-  }); // form for posting comment
+  const [formdata, setFormdata] = React.useState({}); // form for posting comment
   const [likes, setLikes] = React.useState(props.likes.length);
   const [comments, setComments] = React.useState(props.comments);
-  const isPostLiked = props.likes.find(
-    (likeData) => likeData.userid === userdata.userid
-  )
-    ? true
-    : false;
+  let isPostLiked = false;
+  if (userdata) {
+    isPostLiked = props.likes.find(
+      (likeData) => likeData.userid === userdata.userid
+    )
+      ? true
+      : false;
+  }
 
   const [isLiked, setIsLiked] = React.useState(isPostLiked);
 
@@ -96,6 +98,7 @@ export default function FeedComponent(props) {
     setFormdata((prevFormData) => {
       return {
         ...prevFormData,
+        userid: userdata.userid,
         [e.target.id]: e.target.value,
       };
     });
@@ -105,15 +108,22 @@ export default function FeedComponent(props) {
     <div>
       <div className="post-card">
         <div className="poster-details">
-          <img src={props.user.avatar} alt="avatar" className="poster-avatar" />
-          <div className="poster-username">{props.user.username}</div>
+          <div className="poster-profile">
+            <img
+              src={props.user.avatar}
+              alt="avatar"
+              className="poster-avatar"
+            />
+            <div className="poster-username">{props.user.username}</div>
+          </div>
+          <p className="post-date">
+            {new Date(props.createdat).toLocaleString()}
+          </p>
         </div>
+        <hr />
 
         <h2 className="post-title">{props.title}</h2>
         <p className="post-content">{props.content}</p>
-        <p className="post-date">
-          Posted on: {new Date(props.createdat).toLocaleString()}
-        </p>
 
         {/* {props.images && props.images.length > 0 && (
           <div className="post-images">
@@ -147,50 +157,56 @@ export default function FeedComponent(props) {
           </div>
         )}
 
-        <div className="post-actions">
-          <button
-            className={`like-button ${isLiked ? "liked" : ""}`}
-            onClick={(e) => (isLiked ? handleUnlike(e) : handleLike(e))}
-          >
-            {isLiked ? "Unlike" : "Like"}
-          </button>
-          <span className="likes-count">{likes} likes</span>
-          {props.userid !== userdata.userid && (
-            <button className="share-button">Share</button>
-          )}
-        </div>
+        {userdata ? (
+          <div>
+            <div className="post-actions">
+              <button
+                className={`like-button ${isLiked ? "liked" : ""}`}
+                onClick={(e) => (isLiked ? handleUnlike(e) : handleLike(e))}
+              >
+                {isLiked ? "Unlike" : "Like"}
+              </button>
+              <span className="likes-count">{likes} likes</span>
+              {props.userid !== userdata.userid && (
+                <button className="share-button">Share</button>
+              )}
+            </div>
 
-        <div className="post-comments">
-          <h4>Comments:</h4>
-          {comments.length > 0 ? (
-            comments.map((comment) => (
-              <div key={comment.commentid} className="comment">
-                <img
-                  src={comment.user.avatar}
-                  alt={`${comment.user.username}'s avatar`}
-                  className="comment-avatar"
+            <div className="post-comments">
+              <h4>Comments:</h4>
+              {comments.length > 0 ? (
+                comments.map((comment) => (
+                  <div key={comment.commentid} className="comment">
+                    <img
+                      src={comment.user.avatar}
+                      alt={`${comment.user.username}'s avatar`}
+                      className="comment-avatar"
+                    />
+                    <div className="comment-content">
+                      <strong>{comment.user.username}</strong>
+                      <p>{comment.content}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p>No comments yet.</p>
+              )}
+              <div className="add-comment">
+                <input
+                  type="text"
+                  placeholder="Add a comment..."
+                  id="content"
+                  onChange={handleChange}
                 />
-                <div className="comment-content">
-                  <strong>{comment.user.username}</strong>
-                  <p>{comment.content}</p>
-                </div>
+                <button onClick={(e) => handleCommentPost(e, props.postid)}>
+                  Comment
+                </button>
               </div>
-            ))
-          ) : (
-            <p>No comments yet.</p>
-          )}
-          <div className="add-comment">
-            <input
-              type="text"
-              placeholder="Add a comment..."
-              id="content"
-              onChange={handleChange}
-            />
-            <button onClick={(e) => handleCommentPost(e, props.postid)}>
-              Comment
-            </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div>Signup to interact with posts.</div>
+        )}
       </div>
     </div>
   );

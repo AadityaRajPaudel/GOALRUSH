@@ -209,3 +209,18 @@ export const google = async (req, res) => {
     res.status(404).json(err);
   }
 };
+
+export const checkUserLoginToken = (req, res) => {
+  const loggedinUser = req.user; // obtained from middleware containing user's id
+  if (!loggedinUser) {
+    res.status(404).json({
+      success: false,
+      message: "Not logged in",
+    });
+  } else {
+    res.status(201).json({
+      success: true,
+      message: `Success login with userid: ${loggedinUser.id}`,
+    });
+  }
+};

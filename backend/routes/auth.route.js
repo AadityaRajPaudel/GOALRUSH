@@ -10,6 +10,7 @@ import {
   verifyToken,
   updatePassword,
   google,
+  checkUserLoginToken,
 } from "../controllers/auth.controller.js";
 import { verifyUser } from "../middleware/verifyUser.js";
 
@@ -23,6 +24,8 @@ authRouter.put("/update/:userid", updateUser);
 authRouter.put("/addemail/:userid", addUserEmail);
 authRouter.delete("/delete/:userid", deleteUser);
 authRouter.delete("/logout", verifyUser, logoutUser);
+// separate token required for passwordChange
 authRouter.put("/addtoken/:email", addToken);
-authRouter.get("/verifyToken", verifyToken);
 authRouter.put("/updatepw", updatePassword);
+authRouter.get("/verifyToken", verifyToken);
+authRouter.get("/checkuserlogintoken", verifyUser, checkUserLoginToken);

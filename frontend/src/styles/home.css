@@ -1,0 +1,19 @@
+.home-component {
+  background: rgb(5,18,63);
+background: linear-gradient(86deg, rgba(5,18,63,1) 39%, #0037b5 80%);
+}
+
+.home-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}
+
+.ucl {
+  width: 400px;
+  height: 500px;
+  position: fixed;
+  top: 60px;
+  left: 10px;
+}
