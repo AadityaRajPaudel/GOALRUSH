@@ -125,11 +125,17 @@ export const addUserEmailDB = async (userid, email) => {
 export const deleteUserByIdDB = async (userid) => {
   try {
     // await pool.query("DELETE * FROM images WHERE postid ") tyo image jasko user delete garna lako ho
-    await pool.query("DELETE * FROM users WHERE userid=?", [userid]);
-    await pool.query("DELETE * FROM posts WHERE userid=?", [userid]);
+    await pool.query("DELETE FROM comments WHERE userid=?", [userid]);
+    await pool.query("DELETE FROM likes WHERE userid=?", [userid]);
+    await pool.query(
+      "DELETE images FROM images INNER JOIN posts ON images.postid = posts.postid AND posts.userid=?",
+      [userid]
+    );
+    await pool.query("DELETE FROM posts WHERE userid=?", [userid]);
+    await pool.query("DELETE FROM users WHERE userid=?", [userid]);
     return "Successfully deleted user from database.";
   } catch (err) {
-    throw errorThrower("Failed to delete user from database.");
+    throw errorThrower("Failed to delete user from database." + err);
   }
 };
 

@@ -14,8 +14,7 @@ export const getUsers = async (req, res) => {
       message: result,
     });
   } catch (err) {
-    // err object is handled by database.js (all errors are handled at the point where they origin)
-    res.json(err);
+    res.status(400).json(err);
   }
 };
 
@@ -31,7 +30,7 @@ export const getUser = async (req, res) => {
       message: result,
     });
   } catch (err) {
-    res.json(err);
+    res.status(400).json(err);
   }
 };
 
@@ -40,11 +39,11 @@ export const updateUser = async (req, res) => {
     const { userid, username, password } = req.body;
     await updateUserDB(userid, username, password);
     const result = await getUserByIdDB(userid);
-    res.status(200).json({
+    res.status(201).json({
       success: true,
       message: result,
     });
   } catch (err) {
-    res.status(400).json(err);
+    res.status(409).json(err);
   }
 };

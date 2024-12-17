@@ -6,6 +6,7 @@ import {
   addUserEmailDB,
   checkTokenExistsDB,
   createGoogleUser,
+  deleteUserByIdDB,
   getUserByEmailDB,
   getUserByUsernameDB,
   updatePasswordDB,
@@ -17,6 +18,17 @@ export const signup = async (req, res) => {
   try {
     // we expect username, password in case of normal sign in
     const { username, password, confirmPassword } = req.body;
+    const regex =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!regex.test(password)) {
+      return res
+        .status(409)
+        .json(
+          errorThrower(
+            "Password length(min 8) should include Uppercase, Lowercase, Number and Special character"
+          )
+        );
+    }
     if (password != confirmPassword) {
       return res.json(errorThrower("passwords dont match"));
     }
@@ -58,6 +70,17 @@ export const updateUser = async (req, res) => {
     const { avatar, username } = req.body;
     if (req.body.password) {
       const { password } = req.body;
+      const regex =
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!regex.test(password)) {
+        return res
+          .status(409)
+          .json(
+            errorThrower(
+              "Password length(min 8) should include Uppercase, Lowercase, Number and Special character"
+            )
+          );
+      }
       const hashedPassword = bcrypt.hashSync(password, 10);
       const result = await updateUserDB(
         userid,
@@ -65,19 +88,19 @@ export const updateUser = async (req, res) => {
         avatar,
         hashedPassword
       );
-      res.status(200).json({
+      res.status(201).json({
         success: true,
         message: result,
       });
     } else {
       const result = await updateUserDB(userid, username, avatar);
-      res.status(200).json({
+      res.status(201).json({
         success: true,
         message: result,
       });
     }
   } catch (err) {
-    res.status(404).json(err);
+    res.status(409).json(err);
   }
 };
 
@@ -87,12 +110,12 @@ export const addUserEmail = async (req, res) => {
   const userid = req.params.userid;
   try {
     const result = await addUserEmailDB(userid, email);
-    res.status(200).json({
+    res.status(201).json({
       success: true,
       message: result,
     });
   } catch (err) {
-    res.status(404).json(err);
+    res.status(409).json(err);
   }
 };
 
@@ -120,7 +143,7 @@ export const logoutUser = (req, res) => {
         clearedUser: req.user, // received from middleware
       });
   } catch (err) {
-    res.json(errorThrower("Failed to logout user"));
+    res.status(400).json(errorThrower("Failed to logout user"));
   }
 };
 
@@ -128,14 +151,14 @@ export const addToken = async (req, res) => {
   try {
     const email = req.params.email;
     const randomToken = bcrypt.hashSync(email, 10);
-    const result = await addTokenDB(email, randomToken);
-    res.status(200).json({
+    await addTokenDB(email, randomToken);
+    res.status(201).json({
       success: true,
       token: randomToken,
     });
   } catch (err) {
     res
-      .status(404)
+      .status(409)
       .json(errorThrower("Failed to generate and add token." + err));
   }
 };
@@ -160,24 +183,26 @@ export const updatePassword = async (req, res) => {
     const { password } = req.body;
     const hashedPassword = bcrypt.hashSync(password, 10);
     const result = await updatePasswordDB(token, hashedPassword);
-    res.status(200).json({
+    res.status(201).json({
       success: true,
       message: result,
     });
   } catch (err) {
-    res.status(404).json(errorThrower(err));
+    res.status(409).json(errorThrower(err));
   }
 };
 
 export const google = async (req, res) => {
-  const { username, email, avatar } = req.body;
+  let { username, email, avatar } = req.body;
+  username =
+    username.replace(/\s+/g, "") + Math.floor(1000 + Math.random() * 9000);
   try {
     const result = await getUserByEmailDB(email);
     if (result) {
       const token = jwt.sign({ id: result.userid }, process.env.JWT_SECRET_KEY);
       const { password: pass, ...rest } = result;
       res
-        .status(200)
+        .status(201)
         .cookie("access_token", token, {
           httpOnly: true,
         })
@@ -185,6 +210,7 @@ export const google = async (req, res) => {
           success: true,
           message: rest,
         });
+      return;
     } else {
       const randomPassword = Math.floor(Math.random() * 9000 + 1000).toString();
       const hashedPassword = bcrypt.hashSync(randomPassword, 10);
@@ -200,20 +226,22 @@ export const google = async (req, res) => {
         process.env.JWT_SECRET_KEY
       );
       const { password: pass, ...rest } = newUser;
-      res.status(200).cookie("access_token", token, { httpOnly: true }).json({
+      res.status(201).cookie("access_token", token, { httpOnly: true }).json({
         success: true,
         message: rest,
       });
+      return;
     }
   } catch (err) {
-    res.status(404).json(err);
+    res.status(409).json(err);
+    return;
   }
 };
 
 export const checkUserLoginToken = (req, res) => {
   const loggedinUser = req.user; // obtained from middleware containing user's id
   if (!loggedinUser) {
-    res.status(404).json({
+    res.status(401).json({
       success: false,
       message: "Not logged in",
     });

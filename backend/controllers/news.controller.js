@@ -12,7 +12,7 @@ export const getNews = async (req, res) => {
       },
     };
     const response = await fetch(url, options);
-    const result = await response.text();
+    const result = await response.json();
     res.status(200).json(result);
   } catch (err) {
     res.status(404).json(errorThrower("Failed to get news."));

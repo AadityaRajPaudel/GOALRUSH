@@ -21,7 +21,7 @@ export const sendmail = (req, res) => {
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        res.status(404).json({
+        res.status(400).json({
           success: false,
           message: "Failed to send code." + error,
         });
@@ -33,7 +33,7 @@ export const sendmail = (req, res) => {
       }
     });
   } catch (err) {
-    res.status(404).json({
+    res.status(400).json({
       success: false,
       message: "Failed to send code.",
     });
