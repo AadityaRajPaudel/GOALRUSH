@@ -5,6 +5,8 @@ import { newsData } from "../assets/data.js";
 import Navbar from "../components/Navbar.jsx";
 
 export default function News() {
+  // code to fetch news, else fetch the data presaved
+
   return (
     <div>
       <div>

@@ -14,7 +14,7 @@ import { useRef } from "react";
 
 export default function Profile() {
   const userData = useSelector((state) => state.user.currentUser);
-  const [userPosts, setUserPosts] = React.useState([]);
+  const [posts, setPosts] = React.useState([]);
   const [formdata, setFormdata] = React.useState(userData);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
@@ -25,20 +25,24 @@ export default function Profile() {
   useEffect(() => {
     // fetch posts for the current user only
     const fetchPosts = async () => {
+      setLoading(true);
       try {
         const res = await fetch("/api/posts");
         const result = await res.json();
-        const posts = result.message.filter(
-          (post) => post.userid === userData.userid
-        );
-        const mappedPosts = posts.map((post) => {
-          return <Post key={post.postid} {...post} deletePost={deletePost} />;
-        });
-        setUserPosts(mappedPosts); // array of components
-        console.log(formdata);
+
+        if (userData.username === "admin") {
+          setPosts(result.message);
+        } else {
+          const raw_posts = result.message.filter(
+            (post) => post.userid === userData.userid
+          );
+          setPosts(raw_posts);
+        }
+        setLoading(false);
         return;
       } catch (err) {
-        console.log(err);
+        setError(err.message);
+        setLoading(false);
         return;
       }
     };
@@ -55,6 +59,7 @@ export default function Profile() {
   // check if user is logged in, else redirect to home and dispatch delete user
   React.useEffect(() => {
     const checkUserLogin = async () => {
+      setLoading(true);
       const res = await fetch("/api/auth/checkuserlogintoken", {
         method: "GET",
         credentials: "include",
@@ -63,9 +68,12 @@ export default function Profile() {
       console.log(result);
       if (result.success === false) {
         console.log(result);
+        setError(result.message);
+        setLoading(false);
         dispatch(deleteUserSuccess());
         return;
       }
+      setLoading(false);
       return;
     };
     checkUserLogin();
@@ -138,8 +146,8 @@ export default function Profile() {
       const result = await res.json();
       if (result.success === false) {
         setError(result.message);
-        dispatch(updateUserFailure("Failed to update user"));
         setLoading(false);
+        dispatch(updateUserFailure("Failed to update user"));
         return;
       }
       setLoading(false);
@@ -149,14 +157,21 @@ export default function Profile() {
       return;
     } catch (err) {
       setError(err.message);
+      setLoading(false);
       return;
     }
   };
 
   // deleted from post.jsx
   const deletePost = (postid) => {
-    const updatedPosts = userPosts.filter((post) => post.postid !== postid);
-    setUserPosts(updatedPosts);
+    const updatedPosts = posts.filter((post) => post.postid !== postid);
+    setPosts(updatedPosts);
+  };
+
+  const handleAccountDelete = async (e) => {
+    e.preventDefault();
+    try {
+    } catch (err) {}
   };
 
   return (
@@ -164,7 +179,7 @@ export default function Profile() {
       <Navbar />
 
       {/* Navbar pachi ko div */}
-      {formdata ? (
+      {formdata && userData ? (
         <div className="profile">
           <div className="profile-details">
             <div>
@@ -183,14 +198,22 @@ export default function Profile() {
                   display: "none",
                 }}
               />
-              <button onClick={() => fileRef.current.click()}>
-                Update Profile Picture
-              </button>
+              <div style={{ textAlign: "center" }}>
+                <button onClick={() => fileRef.current.click()}>
+                  Update Profile Picture
+                </button>
+              </div>
             </div>
-            <div>{userData.username}</div>
-            <div>Total Posts: {userPosts.length}</div>
+            <div>
+              Username: <b>{userData.username}</b>
+            </div>
+            {userData.email && <div>{userData.email}</div>}
+            <div>Total Posts: {posts.length}</div>
             <div>
               Joined on: {new Date(userData.createdat).toLocaleString()}
+            </div>
+            <div>
+              <button onClick={handleAccountDelete}>DELETE ACCOUNT</button>
             </div>
           </div>
           <div className="profile-update">
@@ -216,14 +239,28 @@ export default function Profile() {
               />
             </div>
             <div>
-              <button onClick={handleSubmit} className="update-profile-button">
+              <button
+                onClick={handleSubmit}
+                className="update-profile-button"
+                disabled={loading}
+              >
                 Update Profile
               </button>
             </div>
-            {userPosts.length > 0 ? (
-              <div className="profile-update-images">{userPosts}</div>
+            {userData.username === "admin" && (
+              <div>
+                You are admin. You can edit or delete all posts posted by users.
+              </div>
+            )}
+            {error && <div>{error}</div>}
+            {posts.length > 0 ? (
+              <div className="profile-update-images">
+                {posts.map((post) => (
+                  <Post key={post.postid} {...post} deletePost={deletePost} />
+                ))}
+              </div>
             ) : (
-              <div>Add posts to edit them !</div>
+              <div>Add posts to edit them!</div>
             )}
           </div>
         </div>

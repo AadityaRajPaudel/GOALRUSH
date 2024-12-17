@@ -14,10 +14,12 @@ import OAuth from "../components/OAuth";
 export default function Signin() {
   const navigate = useNavigate();
   const dispatch = useDispatch(); // to dispatch redux state
-  const { currentUser, error, loading } = useSelector((state) => state.user); // get all details of user slice
+  const { currentUser } = useSelector((state) => state.user); // get all details of user slice
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [formdata, setFormdata] = React.useState({}); // phone, password, confirmPassword
+  const [error, setError] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const handleChange = (e) => {
     setFormdata((prevFormdata) => {
@@ -30,7 +32,7 @@ export default function Signin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(signInStart());
+    setLoading(true);
     try {
       const result = await fetch("/api/auth/signin", {
         method: "POST",
@@ -42,16 +44,19 @@ export default function Signin() {
       const data = await result.json();
       if (data.success === false) {
         // dispatch login error
-        console.log(data);
+        setError(data.message);
+        setLoading(false);
         dispatch(signInFailure(data.message));
         return;
       }
       console.log(data);
+      setLoading(false);
       navigate("/home");
       dispatch(signInSuccess(data.message));
     } catch (err) {
       // dispatch error
-      console.log("Failed to sign in");
+      setLoading(false);
+      setError(err.message);
       dispatch(signInFailure(err.message));
     }
   };
@@ -98,9 +103,14 @@ export default function Signin() {
               </button>
             </div>
           </div>
-          <button className="signin-button" onClick={handleSubmit}>
-            SIGN IN
+          <button
+            className="signin-button"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            {loading ? "SIGNING IN..." : "SIGN IN"}
           </button>
+          {error && <div className="error-text">{error}</div>}
           <hr />
           <div>
             OR: <OAuth />

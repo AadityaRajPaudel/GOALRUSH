@@ -3,12 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { app } from "../../firebase.js";
 import GoogleButton from "react-google-button";
-import {
-  GoogleAuthProvider,
-  getAuth,
-  signInWithPopup,
-  signInWithRedirect,
-} from "firebase/auth";
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import {
   signInFailure,
   signInStart,
@@ -39,6 +34,7 @@ export default function OAuth() {
         }),
       });
       const data = await res.json();
+      console.log(res);
       if (data.success === false) {
         dispatch(signInFailure("Failed to sign in with google"));
         return;

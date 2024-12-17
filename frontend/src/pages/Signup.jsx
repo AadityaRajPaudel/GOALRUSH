@@ -3,11 +3,14 @@ import Navbar from "../components/Navbar.jsx";
 import "../styles/signup.css";
 import "react-phone-number-input/style.css";
 import { Link, useNavigate } from "react-router-dom";
+import OAuth from "../components/OAuth.jsx";
 
 export default function Signup() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [formdata, setFormdata] = React.useState({}); // phone, password, confirmPassword, terms
+  const [error, setError] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const handleChange = (e) => {
     setFormdata((prevFormdata) => {
@@ -19,6 +22,7 @@ export default function Signup() {
   };
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
     try {
       const res = await fetch("/api/auth/signup", {
@@ -32,13 +36,18 @@ export default function Signup() {
       console.log(data);
       if (data.success === false) {
         // handle some error, setError to some text
-        console.log(data.message);
+        setError(data.message);
+        setLoading(false);
         return;
       }
+      setLoading(false);
       navigate("/signin");
+      return;
     } catch (err) {
       // setError, same text
-      console.log("Catch block error signup user");
+      setError(err.message);
+      setLoading(false);
+      return;
     }
   };
 
@@ -91,7 +100,10 @@ export default function Signup() {
           <button className="signup-button" onClick={handleSubmit}>
             SIGN UP
           </button>
-          <div>Or Login with GOOGLE</div>
+          {error && <div className="error-text">{error}</div>}
+          <div>
+            Or: <OAuth />
+          </div>
           <div>
             Already have an account?{" "}
             <Link to={"/signin"} className="signin-from-signup">

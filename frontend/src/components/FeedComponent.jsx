@@ -3,12 +3,15 @@ import { useSelector } from "react-redux";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "../styles/feedcomponent.css";
+import { FaLock } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export default function FeedComponent(props) {
   const userdata = useSelector((state) => state.user.currentUser);
   const [formdata, setFormdata] = React.useState({}); // form for posting comment
   const [likes, setLikes] = React.useState(props.likes.length);
   const [comments, setComments] = React.useState(props.comments);
+  const [error, setError] = React.useState(false);
   let isPostLiked = false;
   if (userdata) {
     isPostLiked = props.likes.find(
@@ -31,6 +34,10 @@ export default function FeedComponent(props) {
         body: JSON.stringify(formdata),
       });
       const result = await res.json();
+      if (result.success === false) {
+        setError(result.message);
+        return;
+      }
       document.getElementById("content").value = ""; // useref
       setComments((prevComments) => {
         const newComment = {
@@ -43,9 +50,10 @@ export default function FeedComponent(props) {
         };
         return [...prevComments, newComment];
       });
-      console.log(result);
+      return;
     } catch (err) {
-      console.log(err);
+      setError(err.message);
+      return;
     }
   };
 
@@ -70,7 +78,7 @@ export default function FeedComponent(props) {
       setIsLiked((prevIsLiked) => !prevIsLiked);
       return;
     } catch (err) {
-      setError(err);
+      setError("Failed to like the post");
       return;
     }
   };
@@ -91,6 +99,37 @@ export default function FeedComponent(props) {
       return;
     } catch (err) {
       setError(err);
+      return;
+    }
+  };
+
+  const handleShare = async (e) => {
+    e.preventDefault();
+    try {
+      const images = props.images.map((image) => image.imageurl);
+      const postDetails = {
+        title: props.title,
+        content: props.content,
+        images,
+        userid: userdata.userid,
+      };
+      const res = await fetch(`/api/posts/upload`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(postDetails),
+      });
+      const result = await res.json();
+      if (result.success === false) {
+        setError(result.message);
+        return;
+      }
+      alert("Post shared successfully.");
+      return;
+    } catch (err) {
+      setError(err.message);
+      return;
     }
   };
 
@@ -105,7 +144,7 @@ export default function FeedComponent(props) {
   };
 
   return (
-    <div>
+    <div className="feed-component">
       <div className="post-card">
         <div className="poster-details">
           <div className="poster-profile">
@@ -144,7 +183,7 @@ export default function FeedComponent(props) {
                 <SwiperSlide>
                   <img
                     src={image.imageurl}
-                    alt="image"
+                    alt="Couldn't load image"
                     style={{
                       height: "auto",
                       width: "100%",
@@ -168,7 +207,9 @@ export default function FeedComponent(props) {
               </button>
               <span className="likes-count">{likes} likes</span>
               {props.userid !== userdata.userid && (
-                <button className="share-button">Share</button>
+                <button className="share-button" onClick={handleShare}>
+                  Share
+                </button>
               )}
             </div>
 
@@ -205,7 +246,10 @@ export default function FeedComponent(props) {
             </div>
           </div>
         ) : (
-          <div>Signup to interact with posts.</div>
+          <div>
+            <FaLock /> <Link to={"signup"}>SIGN UP</Link> to interact with
+            posts.
+          </div>
         )}
       </div>
     </div>

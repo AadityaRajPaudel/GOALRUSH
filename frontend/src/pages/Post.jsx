@@ -129,7 +129,8 @@ export default function Post(props) {
     navigate(`/updatepost/${props.postid}`);
   };
 
-  const handlePostDelete = async (postid) => {
+  const handlePostDelete = async (e, postid) => {
+    e.preventDefault();
     try {
       const res = await fetch(`/api/posts/${postid}`, {
         method: "DELETE",
@@ -162,7 +163,7 @@ export default function Post(props) {
         </button>
         <button
           className="delete-button"
-          onClick={() => handlePostDelete(props.postid)}
+          onClick={(e) => handlePostDelete(e, props.postid)}
         >
           Delete
         </button>

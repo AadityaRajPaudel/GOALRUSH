@@ -9,15 +9,19 @@ export default function ForgetPassword() {
   const [isCodeSent, setIsCodeSent] = React.useState(false);
   const [recoveryCode, setRecoveryCode] = React.useState(null);
   const [error, setError] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const recoveryCodeRef = useRef(null);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
   };
 
-  const sendCode = async () => {
+  const sendCode = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     if (email === "") {
       setError("Enter your email");
+      setLoading(false);
       return;
     }
     const recoveryCode = Math.floor(Math.random() * 9000 + 1000);
@@ -36,13 +40,17 @@ export default function ForgetPassword() {
       });
       if (res.success === false) {
         setError("Failed to send code. Please retry.");
+        setLoading(false);
         return;
       }
       setIsCodeSent(true);
       setRecoveryCode(recoveryCode);
+      setLoading(false);
       return;
     } catch (err) {
-      console.log(err);
+      setLoading(false);
+      setError(err.message);
+      return;
     }
   };
 

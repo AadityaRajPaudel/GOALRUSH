@@ -2,8 +2,10 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import "../styles/updatepost.css";
+import { useSelector } from "react-redux";
 
 export default function UpdatePost() {
+  const currentUser = useSelector((state) => state.user.currentUser);
   const navigate = useNavigate();
   const { postid } = useParams();
   const [post, setPost] = React.useState({});
@@ -13,20 +15,21 @@ export default function UpdatePost() {
 
   React.useEffect(() => {
     const getPosts = async () => {
-      try {
-        const res = await fetch(`/api/posts/${postid}`);
-        const result = await res.json();
-        if (result.success === false) {
-          setError("Failed to get the post");
+      if (currentUser)
+        try {
+          const res = await fetch(`/api/posts/${postid}`);
+          const result = await res.json();
+          if (result.success === false) {
+            setError("Failed to get the post");
+            return;
+          }
+          console.log(postid);
+          setPost(result.message);
+          return;
+        } catch (err) {
+          setError(err.message);
           return;
         }
-        console.log(postid);
-        setPost(result.message);
-        return;
-      } catch (err) {
-        setError(err.message);
-        return;
-      }
     };
     getPosts();
   }, []);
@@ -125,7 +128,7 @@ export default function UpdatePost() {
       alert("Post updated successfully!");
       return;
     } catch (err) {
-      console.log("Error " + err);
+      setError(err.message);
     }
   };
 
