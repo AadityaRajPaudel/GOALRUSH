@@ -106,7 +106,7 @@ export default function Home() {
         <div className="home-right">
           <div className="home-right-content">
             {currentUser && (
-              <Link to={"/profile"}>
+              <Link to={"/profile"} className="link">
                 <div className="user-profile">
                   <div className="user-profile-image-container">
                     <img

@@ -1,6 +1,6 @@
 .home-component {
   background: rgb(5,18,63);
-background: linear-gradient(86deg, rgba(5,18,63,1) 39%, #0037b5 80%);
+background: linear-gradient(86deg, rgba(5,18,63,1) 39%, rgba(5,18,63,1) 80%);
 display: flex;
 gap: 1rem;
 }
@@ -29,11 +29,14 @@ gap: 1rem;
 }
 
 .user-profile {
+  color: black;
   display: flex;
   align-items: center;
   gap: 1.5rem;
   margin: 12px;
   border-radius: 12px;
+  background-color: white;
+  padding: 12px;
 }
 .user-profile-image-container {
   width: 120px;
@@ -46,7 +49,6 @@ gap: 1rem;
 .user-profile-username {
   font-size: 1.5rem;
   font-weight: 600;
-  color: white;
   text-decoration: none;
 }
 
