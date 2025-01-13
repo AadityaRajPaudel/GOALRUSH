@@ -7,7 +7,9 @@ export const postComment = async (req, res) => {
     const result = await postCommentDB(postid, userid, content);
     res.status(201).json({
       success: true,
-      message: result,
+      message: {
+        commentId: result,
+      },
     });
   } catch (err) {
     res.status(409).json(err);

@@ -12,6 +12,7 @@ export default function FeedComponent(props) {
   const [likes, setLikes] = React.useState(props.likes.length);
   const [comments, setComments] = React.useState(props.comments);
   const [error, setError] = React.useState(false);
+  const [isSharing, setIsSharing] = React.useState(false);
   let isPostLiked = false;
   if (userdata) {
     isPostLiked = props.likes.find(
@@ -41,7 +42,7 @@ export default function FeedComponent(props) {
       document.getElementById("content").value = ""; // useref
       setComments((prevComments) => {
         const newComment = {
-          commentid: result.message[result.message.length - 1].commentid,
+          commentid: result.message.commentId,
           content: formdata.content,
           user: {
             username: userdata.username,
@@ -105,6 +106,7 @@ export default function FeedComponent(props) {
 
   const handleShare = async (e) => {
     e.preventDefault();
+    setIsSharing(true);
     try {
       const images = props.images.map((image) => image.imageurl);
       const postDetails = {
@@ -123,12 +125,15 @@ export default function FeedComponent(props) {
       const result = await res.json();
       if (result.success === false) {
         setError(result.message);
+        setIsSharing(false);
         return;
       }
+      setIsSharing(false);
       alert("Post shared successfully.");
       return;
     } catch (err) {
       setError(err.message);
+      setIsSharing(false);
       return;
     }
   };
@@ -163,7 +168,6 @@ export default function FeedComponent(props) {
 
         <h2 className="post-title">{props.title}</h2>
         <p className="post-content">{props.content}</p>
-
         {/* {props.images && props.images.length > 0 && (
           <div className="post-images">
             {props.images.map((image) => (
@@ -195,7 +199,9 @@ export default function FeedComponent(props) {
             </Swiper>
           </div>
         )}
-
+        <div className="sentiment-container">
+          Sentiment: <span className="sentiment">{props.sentiment}</span>
+        </div>
         {userdata ? (
           <div>
             <div className="post-actions">
@@ -208,7 +214,7 @@ export default function FeedComponent(props) {
               <span className="likes-count">{likes} likes</span>
               {props.userid !== userdata.userid && (
                 <button className="share-button" onClick={handleShare}>
-                  Share
+                  {isSharing? "Sharing...": "Share"}
                 </button>
               )}
             </div>
@@ -247,7 +253,7 @@ export default function FeedComponent(props) {
           </div>
         ) : (
           <div>
-            <FaLock /> <Link to={"signup"}>SIGN UP</Link> to interact with
+            <FaLock /> <Link to={"/signup"}>SIGN UP</Link> to interact with
             posts.
           </div>
         )}

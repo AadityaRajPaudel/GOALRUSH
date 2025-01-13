@@ -16,7 +16,7 @@
   border: none; /* Match sign-in */
   display: flex;
   flex-direction: column;
-  min-width: 450px;
+  width: 450px;
   padding: 40px; /* Match sign-in padding */
   gap: 1rem;
   border-radius: 12px;
@@ -84,4 +84,8 @@
   color: #2d4b5e;
   text-decoration: underline;
 
+}
+
+.error-text {
+  color: red;
 }

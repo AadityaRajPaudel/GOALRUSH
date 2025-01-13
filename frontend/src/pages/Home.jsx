@@ -1,7 +1,5 @@
 import React, { useRef } from "react";
 import Navbar from "../components/Navbar.jsx";
-import LiveScoreWidget from "../components/LiveScore.jsx";
-import Post from "./Post.jsx";
 import FeedComponent from "../components/FeedComponent.jsx";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -69,6 +67,7 @@ export default function Home() {
       alert("Email added successfully");
       return;
     } catch (err) {
+      setEmailError("Failed to add email.");
       dispatch(updateUserFailure("Failed to update user email."));
       return;
     }

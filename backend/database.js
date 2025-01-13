@@ -72,7 +72,7 @@ export const addUserDB = async (username, password) => {
     const newUserid = result.insertId;
     return getUserByIdDB(newUserid);
   } catch (err) {
-    throw errorThrower("Problem adding user to database.");
+    throw errorThrower(err.message);
   }
 };
 
@@ -140,11 +140,17 @@ export const deleteUserByIdDB = async (userid) => {
 };
 
 // POSTSSS
-export const addPostDB = async (userId, title, content, imageURLs) => {
+export const addPostDB = async (
+  userId,
+  title,
+  content,
+  imageURLs,
+  sentiment
+) => {
   try {
     const [post] = await pool.query(
-      "INSERT INTO posts (userid, title, content) VALUES (?, ?, ?)",
-      [userId, title, content]
+      "INSERT INTO posts (userid, title, content, sentiment) VALUES (?, ?, ?, ?)",
+      [userId, title, content, sentiment]
     );
     const postId = post.insertId;
     if (imageURLs) {
@@ -309,11 +315,11 @@ export const unlikePostDB = async (postid, userid) => {
 // COMMENTSSSS
 export const postCommentDB = async (postid, userid, comment) => {
   try {
-    await pool.query(
+    const [result] = await pool.query(
       "INSERT INTO comments (content, userid, postid) VALUES (?,?,?)",
       [comment, userid, postid]
     );
-    return "Comment added successfully.";
+    return result.insertId;
   } catch (err) {
     throw errorThrower("Failed to post comment.");
   }

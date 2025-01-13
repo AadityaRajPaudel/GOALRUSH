@@ -6,6 +6,7 @@ import {
   updatePostDB,
 } from "../database.js";
 import { errorThrower } from "../utils/errorThrower.js";
+import fetch from "node-fetch";
 
 export const getPosts = async (req, res) => {
   try {
@@ -35,12 +36,21 @@ export const getPost = async (req, res) => {
 export const uploadPost = async (req, res) => {
   try {
     const { title, images, userid } = req.body;
+    const encodedTitle = encodeURIComponent(title);
     const content = req.body.content || "";
     if (!title) {
       res.status(400).json(errorThrower("Title is *required*"));
       return;
     }
-    const result = await addPostDB(userid, title, content, images);
+    const sentimentRes = await fetch(
+      `http://127.0.0.1:8000/title/${encodedTitle}`,
+      {
+        method: "GET",
+      }
+    );
+    const sentimentResult = await sentimentRes.json();
+    const sentiment = sentimentResult["result"];
+    const result = await addPostDB(userid, title, content, images, sentiment);
     res.status(201).json({
       success: true,
       message: result,

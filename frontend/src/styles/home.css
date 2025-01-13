@@ -15,6 +15,7 @@ gap: 1rem;
   flex-direction: column;
   gap: 2rem;
   align-items: center;
+  min-width: 580px;
 }
 
 .home-right {
@@ -37,7 +38,13 @@ gap: 1rem;
   border-radius: 12px;
   background-color: white;
   padding: 12px;
+  opacity: 0.8;
 }
+
+.user-profile:hover {
+  opacity: 1;
+}
+
 .user-profile-image-container {
   width: 120px;
 }

@@ -124,8 +124,8 @@ export default function Create() {
   console.log(formData);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newFormData = await handleImageUpload(files);
     setLoading(true);
+    const newFormData = await handleImageUpload(files);
     try {
       console.log(newFormData);
 
@@ -146,6 +146,7 @@ export default function Create() {
       navigate("/");
       console.log(data);
     } catch (err) {
+      setLoading(false);
       setError(err.message);
       return;
     }

@@ -53,6 +53,7 @@ export default function Post(props) {
 
   const handleCommentPost = async (e, postid) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await fetch(`/api/comments/${postid}`, {
         method: "POST",
@@ -65,7 +66,7 @@ export default function Post(props) {
       document.getElementById("content").value = ""; // useref
       setComments((prevComments) => {
         const newComment = {
-          commentid: result.message[result.message.length - 1].commentid,
+          commentid: result.message.commentId,
           content: formdata.content,
           user: {
             username: userdata.username,
@@ -74,8 +75,11 @@ export default function Post(props) {
         };
         return [...prevComments, newComment];
       });
+      setLoading(false);
       console.log(result);
     } catch (err) {
+      setLoading(false);
+      setError("Failed to add comment");
       console.log(err);
     }
   };
@@ -140,7 +144,7 @@ export default function Post(props) {
         setError("Couldnot delete post");
         return;
       }
-      props.deletePost(postid);
+      props.deletePost(e, postid);
       return;
     } catch (err) {
       setError("Error");
@@ -151,22 +155,26 @@ export default function Post(props) {
   return (
     <div className="post-card">
       <div className="poster-details">
-        <img src={props.user.avatar} alt="avatar" className="poster-avatar" />
-        <div className="poster-username">{props.user.username}</div>
-        <button
-          className="edit-button"
-          onClick={() => {
-            handlePostEdit(props);
-          }}
-        >
-          Edit
-        </button>
-        <button
-          className="delete-button"
-          onClick={(e) => handlePostDelete(e, props.postid)}
-        >
-          Delete
-        </button>
+        <div className="flex">
+          <img src={props.user.avatar} alt="avatar" className="poster-avatar" />
+          <div className="poster-username">{props.user.username}</div>
+        </div>
+        <div>
+          <button
+            className="delete-button"
+            onClick={(e) => handlePostDelete(e, props.postid)}
+          >
+            Delete
+          </button>
+          <button
+            className="edit-button"
+            onClick={() => {
+              handlePostEdit(props);
+            }}
+          >
+            Edit
+          </button>
+        </div>
       </div>
 
       <h2 className="post-title">{props.title}</h2>
@@ -187,7 +195,9 @@ export default function Post(props) {
           ))}
         </div>
       )}
-
+      <div className="sentiment-container">
+        Sentiment: <span>{props.sentiment}</span>
+      </div>
       <div className="post-actions">
         <button
           className={`like-button ${isLiked ? "liked" : ""}`}
@@ -197,7 +207,7 @@ export default function Post(props) {
         </button>
         <span className="likes-count">{likes} likes</span>
       </div>
-
+      {error && <div className="error-text">{error}</div>}
       <div className="post-comments">
         <h4>Comments:</h4>
         {comments.length > 0 ? (
@@ -221,6 +231,7 @@ export default function Post(props) {
           <input
             type="text"
             placeholder="Add a comment..."
+            className="comment-input-field"
             id="content"
             onChange={handleChange}
           />

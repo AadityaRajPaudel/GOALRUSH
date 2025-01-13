@@ -128,6 +128,7 @@ export default function UpdatePost() {
       alert("Post updated successfully!");
       return;
     } catch (err) {
+      setLoading(false);
       setError(err.message);
     }
   };
@@ -214,7 +215,7 @@ export default function UpdatePost() {
           {loading ? "Updating..." : "Update Post"}
         </button>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="error-text">{error}</div>}
       </form>
     </div>
   );

@@ -93,7 +93,7 @@ export default function ForgetPassword() {
             required
           />
           <button type="button" onClick={sendCode} className="send-code-button">
-            Send Code
+            {loading ? "Sending Code..." : "Send Code"}
           </button>
         </div>
         {isCodeSent && (

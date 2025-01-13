@@ -1,5 +1,5 @@
 .post-card {
-  background-color: white;
+  background-color: rgb(226, 225, 225);
   padding: 20px;
   margin: 20px 0;
   border-radius: 12px;
@@ -7,15 +7,10 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  max-width: 480px;
 }
 
-
-
 .poster-details {
-  display: flex;
-  align-items: center;
-  font-size: 1rem;
+  float: left;
 }
 
 .poster-avatar {
@@ -36,6 +31,7 @@
   border: none;
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s;
+  margin-left: 6px;
 }
 
 .edit-button {
@@ -100,9 +96,8 @@
 .like-button {
   background-color: #658aa1;
   color: white;
-  padding: 8px 12px;
+  padding: 4px 12px;
   border-radius: 6px;
-  border: none;
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s;
 }
@@ -112,9 +107,7 @@
 }
 
 .like-button:hover {
-  background-color: white;
   color: #658aa1;
-  border: 1px solid #658aa1;
 }
 
 .likes-count {
@@ -155,6 +148,7 @@
   font-size: 1rem;
   border-radius: 6px;
   border: 1px solid #ccc;
+  flex: 1;
 }
 
 .add-comment button {
@@ -170,4 +164,9 @@
   background-color: white;
   color: #658aa1;
   border: 1px solid #658aa1;
+}
+
+.error-text {
+  color: red;
+  text-align: center;
 }

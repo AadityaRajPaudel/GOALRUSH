@@ -14,6 +14,29 @@ export default function Navbar() {
   const { currentUser } = useSelector((state) => state.user);
   const { loading, error } = useSelector((state) => state.user); // in case if needed
 
+  // verifyUser middleware useEffect request to make sure invalid state is not maintained
+  React.useEffect(()=> {
+    const checkUserValidity = async () => {
+      const res = await fetch("/api/auth/verifyuser", {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json"
+        },
+        credentials: "include",
+      });
+      const result = await res.json();
+      console.log(result)
+      if (result.success === false) {
+        console.log("User doesnt exist")
+        dispatch(deleteUserSuccess());
+      }
+      // 
+      console.log("User exisits")
+      return;
+    };
+    checkUserValidity();
+  }, [currentUser])
+
   const handleLogout = async (e) => {
     e.preventDefault();
     try {

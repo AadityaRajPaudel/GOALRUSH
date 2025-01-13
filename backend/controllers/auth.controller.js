@@ -48,6 +48,9 @@ export const signin = async (req, res) => {
   try {
     const { username, password } = req.body;
     const result = await getUserByUsernameDB(username);
+    if (!result) {
+      return res.status(404).json(errorThrower("User doesnt exist"));
+    }
     const isPasswordValid = bcrypt.compareSync(password, result.password);
     if (!isPasswordValid) {
       return res.json(errorThrower("Password is incorrect."));
@@ -123,10 +126,13 @@ export const deleteUser = async (req, res) => {
   try {
     const { userid } = req.params;
     const result = await deleteUserByIdDB(userid);
-    res.status(200).json({
-      success: true,
-      message: result,
-    });
+    res
+      .status(200)
+      .clearCookie("access_token", { httpOnly: true, maxAge: 0 })
+      .json({
+        success: true,
+        message: result,
+      });
   } catch (err) {
     res.status(400).json(err);
   }
@@ -163,6 +169,7 @@ export const addToken = async (req, res) => {
   }
 };
 
+// password token
 export const verifyToken = async (req, res) => {
   try {
     const token = req.body.token;
@@ -176,7 +183,7 @@ export const verifyToken = async (req, res) => {
   }
 };
 
-// update password through token, changepassword.jsx
+// forget password new password password, through token, changepassword.jsx
 export const updatePassword = async (req, res) => {
   try {
     const token = req.body.token;
@@ -235,20 +242,5 @@ export const google = async (req, res) => {
   } catch (err) {
     res.status(409).json(err);
     return;
-  }
-};
-
-export const checkUserLoginToken = (req, res) => {
-  const loggedinUser = req.user; // obtained from middleware containing user's id
-  if (!loggedinUser) {
-    res.status(401).json({
-      success: false,
-      message: "Not logged in",
-    });
-  } else {
-    res.status(201).json({
-      success: true,
-      message: `Success login with userid: ${loggedinUser.id}`,
-    });
   }
 };

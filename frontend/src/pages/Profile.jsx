@@ -60,7 +60,7 @@ export default function Profile() {
   React.useEffect(() => {
     const checkUserLogin = async () => {
       setLoading(true);
-      const res = await fetch("/api/auth/checkuserlogintoken", {
+      const res = await fetch("/api/auth/verifyuser", {
         method: "GET",
         credentials: "include",
       });
@@ -108,7 +108,7 @@ export default function Profile() {
         return;
       }
     } catch (err) {
-      setError("Failed to upload new pp, error.");
+      setError("Failed to upload new photo.", err.message);
       return;
     }
   };
@@ -163,15 +163,45 @@ export default function Profile() {
   };
 
   // deleted from post.jsx
-  const deletePost = (postid) => {
-    const updatedPosts = posts.filter((post) => post.postid !== postid);
-    setPosts(updatedPosts);
+  const deletePost = async (postId) => {
+    setLoading(true);
+    const updatedPosts = posts.filter((post) => post.postid !== postId);
+    try {
+      const res = await fetch(`/api/posts/${postId}`, {
+        method: "DELETE",
+      });
+      const result = await res.json();
+      if (result.success === false) {
+        setError(result.message);
+        setLoading(false);
+      }
+      setPosts(updatedPosts);
+    } catch (err) {
+      setLoading(false);
+      setError(err.message);
+    }
   };
 
   const handleAccountDelete = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-    } catch (err) {}
+      const res = await fetch(`/api/auth/delete/${userData.userid}`, {
+        method: "DELETE",
+      });
+      const result = await res.json();
+      if (result.success === false) {
+        setError(result.message);
+        setLoading(false);
+      }
+      setLoading(false);
+      alert("Account is deleted");
+      dispatch(deleteUserSuccess());
+      navigate("/signin");
+    } catch (err) {
+      setLoading(false);
+      setError(err.message);
+    }
   };
 
   return (
@@ -183,12 +213,14 @@ export default function Profile() {
         <div className="profile">
           <div className="profile-details">
             <div>
-              <img
-                src={formdata.avatar}
-                alt="avatar"
-                className="avatar"
-                onClick={() => fileRef.current.click()}
-              />
+              <div className="avatar-container">
+                <img
+                  src={formdata.avatar}
+                  alt="avatar"
+                  className="avatar"
+                  onClick={() => fileRef.current.click()}
+                />
+              </div>
               <input
                 type="file"
                 accept="image/*"
@@ -199,7 +231,10 @@ export default function Profile() {
                 }}
               />
               <div style={{ textAlign: "center" }}>
-                <button onClick={() => fileRef.current.click()}>
+                <button
+                  onClick={() => fileRef.current.click()}
+                  className="update-profile-picture-button"
+                >
                   Update Profile Picture
                 </button>
               </div>
@@ -213,7 +248,12 @@ export default function Profile() {
               Joined on: {new Date(userData.createdat).toLocaleString()}
             </div>
             <div>
-              <button onClick={handleAccountDelete}>DELETE ACCOUNT</button>
+              <button
+                onClick={handleAccountDelete}
+                className="delete-account-button"
+              >
+                DELETE ACCOUNT
+              </button>
             </div>
           </div>
           <div className="profile-update">
@@ -252,7 +292,7 @@ export default function Profile() {
                 You are admin. You can edit or delete all posts posted by users.
               </div>
             )}
-            {error && <div>{error}</div>}
+            {error && <div className="error-text">{error}</div>}
             {posts.length > 0 ? (
               <div className="profile-update-images">
                 {posts.map((post) => (
