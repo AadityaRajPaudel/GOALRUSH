@@ -67,6 +67,8 @@ export default function Signup() {
               id="username"
               placeholder="username"
               onChange={handleChange}
+              maxLength={12}
+              minLength={6}
             />
           </div>
           <div className="passwords-field">

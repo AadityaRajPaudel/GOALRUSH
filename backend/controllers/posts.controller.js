@@ -21,6 +21,14 @@ export const getPosts = async (req, res) => {
   }
 };
 
+const getSentiment = (title) => {
+  const sentiment = new Sentiment();
+  const result = sentiment.analyze(title).score;
+  if (result > 0) return "Happy"
+  else if (result < 0) return "sad"
+  else return "neutral"
+}
+
 export const getPost = async (req, res) => {
   const postId = req.params.postid;
   try {

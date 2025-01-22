@@ -126,6 +126,7 @@ export default function UpdatePost() {
       setPost(result.message); // result contains {success, message}
       setLoading(false);
       alert("Post updated successfully!");
+      navigate("/home")
       return;
     } catch (err) {
       setLoading(false);
