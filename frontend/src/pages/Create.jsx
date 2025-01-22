@@ -143,7 +143,7 @@ export default function Create() {
         return;
       }
       setLoading(false);
-      navigate("/");
+      navigate("/home");
       console.log(data);
     } catch (err) {
       setLoading(false);

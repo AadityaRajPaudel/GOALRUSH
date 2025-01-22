@@ -81,11 +81,12 @@ def read_item(title: str):
         print(predictions)
         predictions.tolist
 
-        result = ""
-        if (predictions[0][0] < 0.65):
+        if (predictions[0][0] > 0.76):
             result = "happy"
-        else:
+        elif (predictions[0][0] < 0.71):
             result = "sad"
+        else:
+            result = "neutral"
     except:
         result = "neutral"
 

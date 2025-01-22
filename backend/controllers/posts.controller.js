@@ -5,8 +5,9 @@ import {
   getPostsDB,
   updatePostDB,
 } from "../database.js";
-import { errorThrower } from "../utils/errorThrower.js";
 import fetch from "node-fetch";
+import Sentiment from "sentiment";
+import { errorThrower } from "../utils/errorThrower.js";
 
 export const getPosts = async (req, res) => {
   try {
@@ -49,7 +50,8 @@ export const uploadPost = async (req, res) => {
       }
     );
     const sentimentResult = await sentimentRes.json();
-    const sentiment = sentimentResult["result"];
+    const sentiment = getSentiment(title);
+    console.log(sentimentResult);
     const result = await addPostDB(userid, title, content, images, sentiment);
     res.status(201).json({
       success: true,
