@@ -62,12 +62,9 @@ def read_item(title: str):
 
         new_text = " ".join(filtered_words)
 
-        print(new_text, "this first")
-
         text = new_text
         list(text)
         text = textcleaning(text)
-        print(text, "then this")
         
         
         sequences = tokenizer1.texts_to_sequences([text])
@@ -78,12 +75,11 @@ def read_item(title: str):
 
         predictions = new_model.predict(sequences)
 
-        print(predictions)
         predictions.tolist
 
-        if (predictions[0][0] > 0.76):
+        if (predictions[0][0] > 0.6):
             result = "happy"
-        elif (predictions[0][0] < 0.71):
+        elif (predictions[0][0] < 0.4):
             result = "sad"
         else:
             result = "neutral"

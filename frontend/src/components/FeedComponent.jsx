@@ -199,9 +199,9 @@ export default function FeedComponent(props) {
             </Swiper>
           </div>
         )}
-        <div className="sentiment-container">
+        {/* <div className="sentiment-container">
           Sentiment: <span className="sentiment">{props.sentiment}</span>
-        </div>
+        </div> */}
         {userdata ? (
           <div>
             <div className="post-actions">
@@ -214,7 +214,7 @@ export default function FeedComponent(props) {
               <span className="likes-count">{likes} likes</span>
               {props.userid !== userdata.userid && (
                 <button className="share-button" onClick={handleShare}>
-                  {isSharing? "Sharing...": "Share"}
+                  {isSharing ? "Sharing..." : "Share"}
                 </button>
               )}
             </div>

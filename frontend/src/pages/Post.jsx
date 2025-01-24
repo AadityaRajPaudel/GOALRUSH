@@ -195,9 +195,9 @@ export default function Post(props) {
           ))}
         </div>
       )}
-      <div className="sentiment-container">
+      {/* <div className="sentiment-container">
         Sentiment: <span>{props.sentiment}</span>
-      </div>
+      </div> */}
       <div className="post-actions">
         <button
           className={`like-button ${isLiked ? "liked" : ""}`}
