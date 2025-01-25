@@ -18,6 +18,10 @@ export const signup = async (req, res) => {
   try {
     // we expect username, password in case of normal sign in
     const { username, password, confirmPassword } = req.body;
+    if (!username.trim() || !password.trim() || !confirmPassword.trim())
+      return res.json(errorThrower("You cannot leave the fields empty"));
+    if (username.trim().length < 6 || username.trim().length > 15)
+      return res.json(errorThrower("Username length 6-15 required."));
     const regex =
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!regex.test(password)) {
@@ -47,6 +51,8 @@ export const signup = async (req, res) => {
 export const signin = async (req, res) => {
   try {
     const { username, password } = req.body;
+    if (!username.trim() || !password.trim())
+      return res.json(errorThrower("You cannot leave the fields empty"));
     const result = await getUserByUsernameDB(username);
     if (!result) {
       return res.status(404).json(errorThrower("User doesnt exist"));
@@ -71,6 +77,10 @@ export const updateUser = async (req, res) => {
   try {
     const userid = req.params.userid;
     const { avatar, username } = req.body;
+    if (!username.trim() || username.length < 6 || username.length > 15)
+      return res
+        .status(403)
+        .json(errorThrower("Username Criteria doesn't match. Length 6-15"));
     if (req.body.password) {
       const { password } = req.body;
       const regex =

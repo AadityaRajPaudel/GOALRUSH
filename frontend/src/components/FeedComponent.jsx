@@ -27,6 +27,7 @@ export default function FeedComponent(props) {
   const handleCommentPost = async (e, postid) => {
     e.preventDefault();
     try {
+      if (formdata.content.trim() === "") return;
       const res = await fetch(`/api/comments/${postid}`, {
         method: "POST",
         headers: {
@@ -89,6 +90,12 @@ export default function FeedComponent(props) {
     try {
       const res = await fetch(`/api/likes/${props.postid}`, {
         method: "DELETE",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          userid: userdata.userid,
+        }),
       });
       const result = await res.json();
       if (result.success === false) {
@@ -114,6 +121,7 @@ export default function FeedComponent(props) {
         content: props.content,
         images,
         userid: userdata.userid,
+        sentiment: props.sentiment,
       };
       const res = await fetch(`/api/posts/upload`, {
         method: "POST",
@@ -199,9 +207,9 @@ export default function FeedComponent(props) {
             </Swiper>
           </div>
         )}
-        {/* <div className="sentiment-container">
+        <div className="sentiment-container">
           Sentiment: <span className="sentiment">{props.sentiment}</span>
-        </div> */}
+        </div>
         {userdata ? (
           <div>
             <div className="post-actions">

@@ -79,7 +79,7 @@ export default function Home() {
       return;
     }
     const filteredPosts = posts.filter((post) =>
-      post.title.toLowerCase().includes(searchTerm)
+      post.title.toLowerCase().includes(searchTerm.toLowerCase().trim())
     );
     setSearchedPosts(filteredPosts);
   };
@@ -96,11 +96,13 @@ export default function Home() {
           />
         </div>
         <div className="home-main">
-          {searchedPosts &&
-            searchedPosts.length > 0 &&
-            searchedPosts.map((post) => {
-              return <FeedComponent key={post.postid} {...post} />;
-            })}
+          {searchedPosts
+            ? searchedPosts &&
+              searchedPosts.length > 0 &&
+              searchedPosts.map((post) => {
+                return <FeedComponent key={post.postid} {...post} />;
+              })
+            : "No posts are added. Add posts to see them in home feed"}
         </div>
         <div className="home-right">
           <div className="home-right-content">

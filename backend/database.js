@@ -166,7 +166,9 @@ export const addPostDB = async (
       });
     }
     return getPostbyIdDB(postId);
-  } catch (err) {}
+  } catch (err) {
+    throw errorThrower(err.message);
+  }
 };
 
 export const getPostsDB = async () => {
@@ -213,13 +215,16 @@ export const getPostbyIdDB = async (postId) => {
     const [images] = await pool.query("SELECT * FROM images WHERE postid=?", [
       postId,
     ]);
+    if (!post) {
+      throw errorThrower("Post doesnt exist");
+    }
     const result = {
       ...post,
       images,
     };
     return result;
   } catch (err) {
-    throw errorThrower("Failed to get posts from Database.");
+    throw errorThrower(err.message);
   }
 };
 
@@ -248,7 +253,7 @@ export const updatePostDB = async (
       content,
       postId,
     ]);
-    if (!oldImages) {
+    if (oldImages.length === 0) {
       await pool.query("DELETE FROM images WHERE postid=?", [postId]);
     } else {
       const oldImagesid = oldImages.map((img) => img.imageid);

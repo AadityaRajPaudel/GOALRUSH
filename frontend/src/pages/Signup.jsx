@@ -67,7 +67,7 @@ export default function Signup() {
               id="username"
               placeholder="username"
               onChange={handleChange}
-              maxLength={12}
+              maxLength={15}
               minLength={6}
             />
           </div>

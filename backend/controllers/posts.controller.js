@@ -6,7 +6,6 @@ import {
   updatePostDB,
 } from "../database.js";
 import fetch from "node-fetch";
-import Sentiment from "sentiment";
 import { errorThrower } from "../utils/errorThrower.js";
 
 export const getPosts = async (req, res) => {
@@ -20,14 +19,6 @@ export const getPosts = async (req, res) => {
     res.status(404).json(err);
   }
 };
-
-const getSentiment = (title) => {
-  const sentiment = new Sentiment();
-  const result = sentiment.analyze(title).score;
-  if (result > 0) return "Happy"
-  else if (result < 0) return "sad"
-  else return "neutral"
-}
 
 export const getPost = async (req, res) => {
   const postId = req.params.postid;
@@ -58,9 +49,13 @@ export const uploadPost = async (req, res) => {
       }
     );
     const sentimentResult = await sentimentRes.json();
-    const sentiment = getSentiment(title);
-    console.log(sentimentResult);
-    const result = await addPostDB(userid, title, content, images, sentiment);
+    const result = await addPostDB(
+      userid,
+      title,
+      content,
+      images,
+      sentimentResult
+    );
     res.status(201).json({
       success: true,
       message: result,

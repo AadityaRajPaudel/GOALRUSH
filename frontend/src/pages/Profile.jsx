@@ -89,28 +89,29 @@ export default function Profile() {
   };
 
   const storeImage = async (file) => {
-    try {
+    return new Promise((res, rej) => {
       const cloudinaryData = new FormData();
       cloudinaryData.append("file", file);
       cloudinaryData.append("upload_preset", "goalrush");
-      const res = await fetch(
-        "https://api.cloudinary.com/v1_1/drtiwkyvj/image/upload",
-        {
-          method: "POST",
-          body: cloudinaryData,
-        }
-      );
-      const data = await res.json();
-      if (data.secure_url) {
-        return data.secure_url;
-      } else {
-        setError("Failed to upload new profile picture.");
-        return;
-      }
-    } catch (err) {
-      setError("Failed to upload new photo.", err.message);
-      return;
-    }
+      fetch("https://api.cloudinary.com/v1_1/drtiwkyvj/image/upload", {
+        method: "POST",
+        body: cloudinaryData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.secure_url) {
+            console.log("Uploaded to Cloudinary:", data.secure_url);
+            res(data.secure_url);
+          } else {
+            console.log(data);
+            rej("Failed to upload image to Cloudinary");
+          }
+        })
+        .catch((error) => {
+          console.error("Error uploading to Cloudinary:", error);
+          rej(error);
+        });
+    });
   };
 
   const handleImageChange = async (e) => {
@@ -122,6 +123,7 @@ export default function Profile() {
         ...formdata,
         avatar: fileUrl,
       });
+      console.log(fileUrl);
       console.log(formdata);
       return;
     } catch (err) {
@@ -141,6 +143,7 @@ export default function Profile() {
         headers: {
           "Content-type": "application/json",
         },
+        // formdata has userid, email, avatar, username
         body: JSON.stringify(formdata),
       });
       const result = await res.json();
@@ -153,7 +156,7 @@ export default function Profile() {
       setLoading(false);
       dispatch(updateUserSuccess(formdata));
       alert("Profile updated successfully");
-      navigate("/");
+      navigate("/home");
       return;
     } catch (err) {
       setError(err.message);
@@ -163,7 +166,8 @@ export default function Profile() {
   };
 
   // deleted from post.jsx
-  const deletePost = async (postId) => {
+  const deletePost = async (e, postId) => {
+    e.preventDefault();
     setLoading(true);
     const updatedPosts = posts.filter((post) => post.postid !== postId);
     try {
@@ -174,8 +178,12 @@ export default function Profile() {
       if (result.success === false) {
         setError(result.message);
         setLoading(false);
+        return;
       }
       setPosts(updatedPosts);
+      setLoading(false);
+      alert("Post deleted successfully");
+      return;
     } catch (err) {
       setLoading(false);
       setError(err.message);
@@ -212,10 +220,13 @@ export default function Profile() {
       {formdata && userData ? (
         <div className="profile">
           <div className="profile-details">
-            <div>
+            <div className="profile-picture">
               <div className="avatar-container">
                 <img
-                  src={formdata.avatar}
+                  src={
+                    formdata.avatar ||
+                    "https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png"
+                  }
                   alt="avatar"
                   className="avatar"
                   onClick={() => fileRef.current.click()}
@@ -284,7 +295,7 @@ export default function Profile() {
                 className="update-profile-button"
                 disabled={loading}
               >
-                Update Profile
+                Confirm Update
               </button>
             </div>
             {userData.username === "admin" && (

@@ -104,10 +104,10 @@ export default function UpdatePost() {
       // fetch request to add image to images table that returns post with updated images
       // set post to the returned response
       const reqBody = {
-        newImages: imageUrls || "",
+        newImages: imageUrls,
         title: post.title,
         content: post.content,
-        images: post.images || "",
+        images: post.images,
       };
       console.log(imageUrls);
       const res = await fetch(`/api/posts/${postid}`, {
@@ -126,7 +126,7 @@ export default function UpdatePost() {
       setPost(result.message); // result contains {success, message}
       setLoading(false);
       alert("Post updated successfully!");
-      navigate("/home")
+      navigate("/home");
       return;
     } catch (err) {
       setLoading(false);

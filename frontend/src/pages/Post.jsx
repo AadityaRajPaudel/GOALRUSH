@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import "../styles/post.css";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +20,7 @@ export default function Post(props) {
   const [isLiked, setIsLiked] = React.useState(isPostLiked);
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const commentRef = useRef(null);
   console.log(comments);
   const handleChange = (e) => {
     setFormdata((prevFormdata) => {
@@ -55,6 +56,7 @@ export default function Post(props) {
     e.preventDefault();
     setLoading(true);
     try {
+      if (formdata.content.trim() === "") return;
       const res = await fetch(`/api/comments/${postid}`, {
         method: "POST",
         headers: {
@@ -115,6 +117,12 @@ export default function Post(props) {
     try {
       const res = await fetch(`/api/likes/${props.postid}`, {
         method: "DELETE",
+        headers: {
+          "Content-type": "applicationn/json",
+        },
+        body: JSON.stringify({
+          userid: userdata.userid,
+        }),
       });
       const result = await res.json();
       if (result.success === false) {
@@ -145,6 +153,8 @@ export default function Post(props) {
         return;
       }
       props.deletePost(e, postid);
+      alert("Post deleted successfully");
+      navigate("/profile");
       return;
     } catch (err) {
       setError("Error");
@@ -195,9 +205,9 @@ export default function Post(props) {
           ))}
         </div>
       )}
-      {/* <div className="sentiment-container">
+      <div className="sentiment-container">
         Sentiment: <span>{props.sentiment}</span>
-      </div> */}
+      </div>
       <div className="post-actions">
         <button
           className={`like-button ${isLiked ? "liked" : ""}`}
@@ -234,6 +244,7 @@ export default function Post(props) {
             className="comment-input-field"
             id="content"
             onChange={handleChange}
+            required
           />
           <button onClick={(e) => handleCommentPost(e, props.postid)}>
             Comment

@@ -122,6 +122,7 @@ export default function Create() {
     }
   };
   console.log(formData);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
