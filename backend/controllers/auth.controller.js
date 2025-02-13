@@ -20,8 +20,8 @@ export const signup = async (req, res) => {
     const { username, password, confirmPassword } = req.body;
     if (!username.trim() || !password.trim() || !confirmPassword.trim())
       return res.json(errorThrower("You cannot leave the fields empty"));
-    if (username.trim().length < 6 || username.trim().length > 15)
-      return res.json(errorThrower("Username length 6-15 required."));
+    if (username.trim().length < 8 || username.trim().length > 12)
+      return res.json(errorThrower("Username length 8-12 required."));
     const regex =
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!regex.test(password)) {

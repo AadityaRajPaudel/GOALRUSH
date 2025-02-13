@@ -36,12 +36,8 @@ export const getPost = async (req, res) => {
 export const uploadPost = async (req, res) => {
   try {
     const { title, images, userid } = req.body;
-    const encodedTitle = encodeURIComponent(title);
     const content = req.body.content || "";
-    if (!title) {
-      res.status(400).json(errorThrower("Title is *required*"));
-      return;
-    }
+    const encodedTitle = encodeURIComponent(title);
     const sentimentRes = await fetch(
       `http://127.0.0.1:8000/title/${encodedTitle}`,
       {
@@ -82,12 +78,21 @@ export const updatePost = async (req, res) => {
   try {
     const { postid } = req.params;
     const { title, content, newImages, images } = req.body;
+    const encodedTitle = encodeURIComponent(title);
+    const sentimentRes = await fetch(
+      `http://127.0.0.1:8000/title/${encodedTitle}`,
+      {
+        method: "GET",
+      }
+    );
+    const sentimentResult = await sentimentRes.json();
     const result = await updatePostDB(
       postid,
       title,
       content,
       newImages,
-      images
+      images,
+      sentimentResult
     );
     res.status(201).json({
       success: true,

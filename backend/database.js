@@ -245,14 +245,14 @@ export const updatePostDB = async (
   title,
   content,
   imageURLs,
-  oldImages
+  oldImages,
+  sentimentResult
 ) => {
   try {
-    await pool.query("UPDATE posts SET title=?, content=? WHERE postid=?", [
-      title,
-      content,
-      postId,
-    ]);
+    await pool.query(
+      "UPDATE posts SET title=?, content=?, sentiment=? WHERE postid=?",
+      [title, content, sentimentResult, postId]
+    );
     if (oldImages.length === 0) {
       await pool.query("DELETE FROM images WHERE postid=?", [postId]);
     } else {
