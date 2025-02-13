@@ -3,6 +3,7 @@
 background: linear-gradient(86deg, rgba(5,18,63,1) 39%, rgba(5,18,63,1) 80%);
 display: flex;
 gap: 1rem;
+min-height: 100vh;
 }
 
 .home-left {
@@ -86,23 +87,24 @@ gap: 1rem;
 
 .searchbar>div>input {
   padding: 12px;
-  border-top-left-radius: 6px;
-  border-bottom-left-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .searchbar button {
   padding: 12px;
-  cursor: pointer;
   background-color: transparent;
   color: white;
   border: 1px solid white;
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
+  cursor: pointer;
 }
 
 .searchbar button:hover {
   background-color: white;
-  color: blue
+  color: blue;
 }
 
 .email-container {
@@ -143,4 +145,16 @@ gap: 1rem;
   .home-left {
     display: none;
   }
+}
+
+.see-all-posts {
+  text-align: center;
+  padding: 8px;
+}
+
+.see-all-posts-button {
+  padding: 6px;
+  font-size: medium;
+
+  cursor: pointer;
 }

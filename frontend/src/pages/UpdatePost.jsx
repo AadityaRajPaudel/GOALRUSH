@@ -3,15 +3,16 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import "../styles/updatepost.css";
 import { useSelector } from "react-redux";
+import Navbar from "../components/Navbar";
 
 export default function UpdatePost() {
   const currentUser = useSelector((state) => state.user.currentUser);
   const navigate = useNavigate();
   const { postid } = useParams();
-  const [post, setPost] = React.useState({});
   const [files, setFiles] = React.useState();
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [formData, setFormdata] = React.useState({});
 
   React.useEffect(() => {
     const getPosts = async () => {
@@ -24,7 +25,7 @@ export default function UpdatePost() {
             return;
           }
           console.log(postid);
-          setPost(result.message);
+          setFormdata(result.message);
           return;
         } catch (err) {
           setError(err.message);
@@ -33,14 +34,15 @@ export default function UpdatePost() {
     };
     getPosts();
   }, []);
+  console.log(formData);
 
   const handleImageDelete = (e, imgId) => {
     e.preventDefault();
     try {
-      const updatedImages = post.images.filter(
+      const updatedImages = formData.images.filter(
         (image) => image.imageid !== imgId
       );
-      setPost((prevPost) => {
+      setFormdata((prevPost) => {
         return {
           ...prevPost,
           images: updatedImages,
@@ -54,12 +56,12 @@ export default function UpdatePost() {
 
   const storeImage = async (file) => {
     return new Promise((res, rej) => {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", "goalrush");
+      const formdata = new FormData();
+      formdata.append("file", file);
+      formdata.append("upload_preset", "goalrush");
       fetch("https://api.cloudinary.com/v1_1/drtiwkyvj/image/upload", {
         method: "POST",
-        body: formData,
+        body: formdata,
       })
         .then((response) => response.json())
         .then((data) => {
@@ -78,6 +80,7 @@ export default function UpdatePost() {
     try {
       if (!files || files.length === 0) {
         setError("No image to be uploaded");
+        return;
       }
       console.log(files.length);
       const filePromises = [];
@@ -96,7 +99,21 @@ export default function UpdatePost() {
     e.preventDefault();
     setLoading(true);
     try {
+      if (formData.title.length > 50 || formData.title.length < 10) {
+        setError("Title must contain 10-50 characters.");
+        setLoading(false);
+        return;
+      } else if (formData.content.length > 200) {
+        setError("Content length exceeded, must be less than 200 characters.");
+        setLoading(false);
+        return;
+      }
       let imageUrls = [];
+      if (files.length + formData.images.length > 4) {
+        setError("Image limit exceeds. Maximum 4 images allowed.");
+        setLoading(false);
+        return;
+      }
       console.log(files);
       if (files) {
         imageUrls = await uploadImages(files);
@@ -105,9 +122,9 @@ export default function UpdatePost() {
       // set post to the returned response
       const reqBody = {
         newImages: imageUrls,
-        title: post.title,
-        content: post.content,
-        images: post.images,
+        title: formData.title,
+        content: formData.content,
+        images: formData.images,
       };
       console.log(imageUrls);
       const res = await fetch(`/api/posts/${postid}`, {
@@ -123,7 +140,7 @@ export default function UpdatePost() {
         setLoading(false);
         return;
       }
-      setPost(result.message); // result contains {success, message}
+      setFormdata(result.message); // result contains {success, message}
       setLoading(false);
       alert("Post updated successfully!");
       navigate("/home");
@@ -135,89 +152,96 @@ export default function UpdatePost() {
   };
 
   const handleChange = (e) => {
-    setPost((prevPost) => {
+    setFormdata((prevFormdata) => {
       return {
-        ...prevPost,
+        ...prevFormdata,
         [e.target.id]: e.target.value,
       };
     });
   };
 
   return (
-    <div className="update-post-container">
-      <form className="update-post-form" onSubmit={(e) => e.preventDefault()}>
-        <h1 className="update-post-title">Update Your Post</h1>
+    <div>
+      <Navbar />
+      <div className="update-post-container">
+        <form className="update-post-form" onSubmit={(e) => e.preventDefault()}>
+          <h1 className="update-post-title">Update Your Post</h1>
 
-        <div className="field">
-          <label htmlFor="title" className="field-label">
-            Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            className="field-input"
-            value={post.title || ""}
-            onChange={handleChange}
-            placeholder="Enter post title"
-            required
-          />
-        </div>
-
-        <div className="field">
-          <label htmlFor="content" className="field-label">
-            Content
-          </label>
-          <textarea
-            id="content"
-            className="field-textarea"
-            value={post.content || ""}
-            onChange={handleChange}
-            placeholder="Write your post content here..."
-            required
-          ></textarea>
-        </div>
-
-        {post.images && post.images.length > 0 && (
-          <div className="image-preview">
-            {post.images.map((image) => (
-              <div className="image-container" key={image.imageid}>
-                <img src={image.imageurl} alt="post-image" className="image" />
-                <button
-                  type="button"
-                  className="delete-image-button"
-                  onClick={(e) => handleImageDelete(e, image.imageid)}
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
+          <div className="field">
+            <label htmlFor="title" className="field-label">
+              Title
+            </label>
+            <input
+              type="text"
+              id="title"
+              className="field-input"
+              value={formData.title || ""}
+              onChange={handleChange}
+              placeholder="Enter post title"
+              required
+            />
           </div>
-        )}
 
-        <div className="file-upload">
-          <label htmlFor="images" className="file-upload-label">
-            Add More Images
-          </label>
-          <input
-            type="file"
-            id="images"
-            accept="image/*"
-            multiple
-            onChange={(e) => setFiles(e.target.files)}
-            className="file-input"
-          />
-        </div>
+          <div className="field">
+            <label htmlFor="content" className="field-label">
+              Content
+            </label>
+            <textarea
+              id="content"
+              className="field-textarea"
+              value={formData.content || ""}
+              onChange={handleChange}
+              placeholder="Write your post content here..."
+              required
+            ></textarea>
+          </div>
 
-        <button
-          type="button"
-          className="update-post-button"
-          onClick={(e) => updatePost(e)}
-        >
-          {loading ? "Updating..." : "Update Post"}
-        </button>
+          {formData.images && formData.images.length > 0 && (
+            <div className="image-preview">
+              {formData.images.map((image) => (
+                <div className="image-container" key={image.imageid}>
+                  <img
+                    src={image.imageurl}
+                    alt="post-image"
+                    className="image"
+                  />
+                  <button
+                    type="button"
+                    className="delete-image-button"
+                    onClick={(e) => handleImageDelete(e, image.imageid)}
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
 
-        {error && <div className="error-text">{error}</div>}
-      </form>
+          <div className="file-upload">
+            <label htmlFor="images" className="file-upload-label">
+              Add More Images
+            </label>
+            <input
+              type="file"
+              id="images"
+              accept="image/*"
+              multiple
+              onChange={(e) => setFiles(e.target.files)}
+              className="file-input"
+            />
+          </div>
+
+          <button
+            type="button"
+            className="update-post-button"
+            onClick={(e) => updatePost(e)}
+          >
+            {loading ? "Updating..." : "Update Post"}
+          </button>
+
+          {error && <div className="error-text">{error}</div>}
+        </form>
+      </div>
     </div>
   );
 }

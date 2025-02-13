@@ -1,6 +1,6 @@
 .landing-page {
   background: rgb(136,181,233);
-background: radial-gradient(circle, rgb(51, 93, 141) 0%, #26314A 58%);
+background: radial-gradient(circle, rgb(51, 93, 141) 0%, #23304a 58%);
   height: 91vh;
   display: flex;
   flex-direction: column;

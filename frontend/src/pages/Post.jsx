@@ -56,7 +56,10 @@ export default function Post(props) {
     e.preventDefault();
     setLoading(true);
     try {
-      if (formdata.content.trim() === "") return;
+      if (formdata.content.trim() === "") {
+        setLoading(false);
+        return;
+      }
       const res = await fetch(`/api/comments/${postid}`, {
         method: "POST",
         headers: {
@@ -217,7 +220,6 @@ export default function Post(props) {
         </button>
         <span className="likes-count">{likes} likes</span>
       </div>
-      {error && <div className="error-text">{error}</div>}
       <div className="post-comments">
         <h4>Comments:</h4>
         {comments.length > 0 ? (
@@ -250,6 +252,7 @@ export default function Post(props) {
             Comment
           </button>
         </div>
+        {error && <div className="error-text">{error}</div>}
       </div>
     </div>
   );

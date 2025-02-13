@@ -2,17 +2,9 @@ import React from "react";
 import Navbar from "../components/Navbar.jsx";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// FIREBASE
-import { app } from "../../firebase.js";
-import {
-  getStorage,
-  ref,
-  getDownloadURL,
-  uploadBytesResumable,
-  uploadBytes,
-} from "firebase/storage";
 import { deleteUserSuccess } from "../redux/user/userSlice.js";
 import "../styles/create.css";
+import { errorThrower } from "../../../backend/utils/errorThrower.js";
 
 export default function Create() {
   const navigate = useNavigate();
@@ -22,6 +14,7 @@ export default function Create() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [formData, setFormData] = React.useState({
+    userid: userState.currentUser.userid,
     title: "",
     content: "",
     images: [],
@@ -58,7 +51,7 @@ export default function Create() {
     setFormData((prevFormData) => {
       return {
         ...prevFormData,
-        userid: userState.currentUser.userid,
+        // userid: userState.currentUser.userid,
         [e.target.id]: e.target.value,
       };
     });
@@ -95,8 +88,9 @@ export default function Create() {
     setLoading(true);
 
     if (!files || files.length === 0) {
-      setLoading(false);
-      return;
+      return errorThrower("No images selected");
+    } else if (files.length > 4) {
+      return errorThrower("Image limit exceeded, must be less than 5.");
     }
 
     // Store promises for all images
@@ -106,19 +100,17 @@ export default function Create() {
     }
 
     try {
-      const urls = await Promise.all(filesPromises); // Wait for all uploads to complete
+      const urls = await Promise.all(filesPromises);
       const newFormData = {
         ...formData,
         images: formData.images.concat(urls),
       };
       setFormData(newFormData);
-      setLoading(false);
-      console.log("All images uploaded successfully:", urls);
-      return newFormData;
+      // return newFormData;
+      return;
     } catch (err) {
-      console.error("Failed to upload images:", err);
       setError("Failed to upload");
-      setLoading(false);
+      return;
     }
   };
   console.log(formData);
@@ -126,21 +118,36 @@ export default function Create() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const newFormData = await handleImageUpload(files);
+
+    // first check title and content
+    if (formData.title.length > 50) {
+      setError("Title length exceeded, must be less than 50 characters.");
+      setLoading(false);
+      return;
+    } else if (formData.content.length > 200) {
+      setError("Content length exceeded, must be less than 200 characters.");
+      setLoading(false);
+      return;
+    } else if (formData.title.length < 10) {
+      setError("Please enter title with a longer sentence.");
+      setLoading(false);
+      return;
+    }
     try {
-      console.log(newFormData);
+      await handleImageUpload(files);
 
       const result = await fetch("/api/posts/upload", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
         },
-        body: JSON.stringify(newFormData),
+        body: JSON.stringify(formData),
         credentials: "include",
       });
       const data = await result.json();
       if (data.success === false) {
-        setError("Failed to upload post to server.");
+        setError("Failed to upload post to server.", data.message);
+        setLoading(false);
         return;
       }
       setLoading(false);

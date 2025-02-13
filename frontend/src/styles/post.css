@@ -21,6 +21,7 @@
 
 .poster-username {
   font-weight: bold;
+  margin-left: 8px;
 }
 
 .edit-button,
@@ -169,4 +170,5 @@
 .error-text {
   color: red;
   text-align: center;
+  margin-top: 6px;
 }

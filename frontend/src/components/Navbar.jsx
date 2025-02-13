@@ -64,7 +64,13 @@ export default function Navbar() {
       <ul className="navbar-list">
         <li>
           <h1>
-            <Link to={"/"} className="link goalrush-title">
+            <Link
+              to={"/"}
+              className="link goalrush-title"
+              style={{
+                cursor: "pointer",
+              }}
+            >
               GoalRush
             </Link>
           </h1>

@@ -299,8 +299,9 @@ export default function Profile() {
               </button>
             </div>
             {userData.username === "admin" && (
-              <div>
-                You are admin. You can edit or delete all posts posted by users.
+              <div style={{ color: "white" }}>
+                You are the <span style={{ color: "red" }}>Admin</span>. You can
+                edit or delete all posts posted by users.
               </div>
             )}
             {error && <div className="error-text">{error}</div>}

@@ -73,7 +73,8 @@ export default function Home() {
     }
   };
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    e.preventDefault();
     if (searchTerm === "") {
       setSearchedPosts(posts);
       return;
@@ -81,7 +82,9 @@ export default function Home() {
     const filteredPosts = posts.filter((post) =>
       post.title.toLowerCase().includes(searchTerm.toLowerCase().trim())
     );
+    console.log(filteredPosts);
     setSearchedPosts(filteredPosts);
+    return;
   };
 
   return (
@@ -96,13 +99,20 @@ export default function Home() {
           />
         </div>
         <div className="home-main">
-          {searchedPosts
-            ? searchedPosts &&
-              searchedPosts.length > 0 &&
-              searchedPosts.map((post) => {
-                return <FeedComponent key={post.postid} {...post} />;
-              })
-            : "No posts are added. Add posts to see them in home feed"}
+          {searchedPosts.length === 0 ? (
+            <div
+              style={{
+                color: "red",
+                padding: "18px",
+              }}
+            >
+              No posts match your search
+            </div>
+          ) : (
+            searchedPosts.map((post) => (
+              <FeedComponent key={post.postid} {...post} />
+            ))
+          )}
         </div>
         <div className="home-right">
           <div className="home-right-content">
@@ -123,7 +133,7 @@ export default function Home() {
               </Link>
             )}
             <hr />
-            <div className="searchbar">
+            <form className="searchbar" onSubmit={handleSearch}>
               <label htmlFor="search">Search posts based on title:</label>
               <div>
                 <input
@@ -132,8 +142,18 @@ export default function Home() {
                   onChange={() => setSearchTerm(searchRef.current.value)}
                   ref={searchRef}
                 />
-                <button onClick={handleSearch}>Search</button>
+                <input type="submit" value="Search" />
               </div>
+            </form>
+            <div className="see-all-posts">
+              <button
+                className="see-all-posts-button"
+                onClick={() => {
+                  setSearchedPosts(posts);
+                }}
+              >
+                See all posts
+              </button>
             </div>
             <hr />
             {currentUser && currentUser.username && !currentUser.email && (

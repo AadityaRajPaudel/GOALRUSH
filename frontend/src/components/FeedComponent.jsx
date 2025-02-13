@@ -189,7 +189,7 @@ export default function FeedComponent(props) {
           </div>
         )} */}
         {props.images && props.images.length > 0 && (
-          <div>
+          <div className="swiper-container">
             <Swiper spaceBetween={50}>
               {props.images.map((image) => (
                 <SwiperSlide>

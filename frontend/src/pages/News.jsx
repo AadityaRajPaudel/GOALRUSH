@@ -6,9 +6,11 @@ import Navbar from "../components/Navbar.jsx";
 
 export default function News() {
   const [news, setNews] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
 
   // code to fetch news, else fetch the data presaved
   React.useEffect(() => {
+    setLoading(true);
     const getNews = async () => {
       const res = await fetch("/api/news", {
         method: "GET",
@@ -22,16 +24,30 @@ export default function News() {
       return;
     };
     getNews();
+    setLoading(false);
   }, []);
   return (
     <div>
-      <div>
-        <Navbar />
+      <Navbar />
+      <div
+        style={{
+          backgroundColor: "#567081",
+          color: "white",
+          padding: "4px",
+        }}
+      >
+        News are scraped from:{" "}
+        <a href="https://www.dailymail.co.uk" style={{ color: "pink" }}>
+          dailymail.co.uk
+        </a>{" "}
+        website.
       </div>
       <div className="news-list">
-        {newsData.map((newsItem) => (
-          <NewsCard key={newsItem.id} news={newsItem} />
-        ))}
+        {loading
+          ? "Loading..."
+          : news.map((newsItem) => (
+              <NewsCard key={newsItem.id} news={newsItem} />
+            ))}
       </div>
     </div>
   );
