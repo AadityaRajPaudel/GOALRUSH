@@ -88,9 +88,9 @@ export default function Create() {
     setLoading(true);
 
     if (!files || files.length === 0) {
-      return errorThrower("No images selected");
+      throw errorThrower("No images selected");
     } else if (files.length > 4) {
-      return errorThrower("Image limit exceeded, must be less than 5.");
+      throw errorThrower("Image limit exceeded, must be less than 5.");
     }
 
     // Store promises for all images
@@ -120,16 +120,12 @@ export default function Create() {
     setLoading(true);
 
     // first check title and content
-    if (formData.title.length > 50) {
-      setError("Title length exceeded, must be less than 50 characters.");
+    if (formData.title.length > 50 || formData.title.length < 10) {
+      setError("Title must contain 10-50 characters.");
       setLoading(false);
       return;
     } else if (formData.content.length > 200) {
       setError("Content length exceeded, must be less than 200 characters.");
-      setLoading(false);
-      return;
-    } else if (formData.title.length < 10) {
-      setError("Please enter title with a longer sentence.");
       setLoading(false);
       return;
     }

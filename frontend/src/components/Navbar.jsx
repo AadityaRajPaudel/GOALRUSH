@@ -7,6 +7,10 @@ import {
   deleteUserStart,
   deleteUserSuccess,
 } from "../redux/user/userSlice";
+import { IoHome } from "react-icons/io5";
+import { TbPlayFootball } from "react-icons/tb";
+import { IoCreateOutline } from "react-icons/io5";
+import { FaRegNewspaper } from "react-icons/fa6";
 
 export default function Navbar() {
   const dispatch = useDispatch();
@@ -78,22 +82,26 @@ export default function Navbar() {
         <div className="navbar-center-items">
           <li>
             <Link to={"/home"} className="link">
+              <IoHome style={{ marginRight: "5px" }} />
               HOME
             </Link>
           </li>
           <li>
             <Link to={"/matches"} className="link">
+              <TbPlayFootball style={{ marginRight: "5px" }} />
               MATCHES
             </Link>
           </li>
           <li>
             <Link to={"/news"} className="link">
+              <FaRegNewspaper style={{ marginRight: "5px" }} />
               NEWS
             </Link>
           </li>
           {currentUser && (
             <li>
               <Link to={"/create"} className="link">
+                <IoCreateOutline style={{ marginRight: "5px" }} />
                 CREATE
               </Link>
             </li>

@@ -18,7 +18,7 @@ export default function ChangePassword() {
     const checkTokenExists = async () => {
       try {
         const res = await fetch(`/api/auth/verifyToken`, {
-          method: "GET",
+          method: "POST",
           headers: {
             "Content-type": "application/json",
           },
@@ -34,7 +34,7 @@ export default function ChangePassword() {
         }
         return;
       } catch (err) {
-        setError(err);
+        setError(err.message);
       }
     };
     checkTokenExists();
@@ -48,10 +48,12 @@ export default function ChangePassword() {
       };
     });
   };
-
-  const handleSubmit = async () => {
+  console.log(formdata);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (formdata.password !== formdata.confirmPassword) {
       setError("Passwords donot match.");
+      console.log("Not match");
       return;
     }
     try {
@@ -65,12 +67,16 @@ export default function ChangePassword() {
           token,
         }),
       });
+      if (res.success === false) {
+        setError(res.message);
+        return;
+      }
 
-      // aba token change handini db ma
+      // change token in db
       alert("Password changed successfully.");
       navigate("/signin");
     } catch (err) {
-      setError(err);
+      setError(err.message);
       return;
     }
   };
@@ -108,6 +114,7 @@ export default function ChangePassword() {
         <button type="submit" className="change-password-button">
           Change Password
         </button>
+        {error && <div style={{ color: "red" }}>This is {error}</div>}
       </form>
     </div>
   );

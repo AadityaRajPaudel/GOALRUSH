@@ -20,9 +20,9 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [emailError, setEmailError] = React.useState(false);
   const searchRef = useRef(null);
+  const errorRef = useRef(null);
 
   React.useEffect(() => {
-    // fetch posts for the current user only
     const fetchPosts = async () => {
       try {
         const res = await fetch("/api/posts", {
@@ -49,7 +49,7 @@ export default function Home() {
     e.preventDefault();
     dispatch(updateUserStart());
     try {
-      await fetch(`/api/auth/addemail/${currentUser.userid}`, {
+      const res = await fetch(`/api/auth/addemail/${currentUser.userid}`, {
         method: "PUT",
         headers: {
           "Content-type": "application/json",
@@ -58,6 +58,12 @@ export default function Home() {
           email,
         }),
       });
+      const result = await res.json();
+      if (result.success === false) {
+        setEmailError(result.message);
+        dispatch(updateUserFailure("Failed to update user email."));
+        return;
+      }
       dispatch(
         updateUserSuccess({
           ...currentUser,
@@ -142,7 +148,11 @@ export default function Home() {
                   onChange={() => setSearchTerm(searchRef.current.value)}
                   ref={searchRef}
                 />
-                <input type="submit" value="Search" />
+                <input
+                  type="submit"
+                  value="Search"
+                  className="searchbar-button"
+                />
               </div>
             </form>
             <div className="see-all-posts">
@@ -161,7 +171,10 @@ export default function Home() {
                 <div>
                   Please enter your email here in case you forget password.
                 </div>
-                <div className="email-container-input">
+                <form
+                  className="email-container-input"
+                  onSubmit={handleEmailSubmit}
+                >
                   <input
                     type="email"
                     id="email"
@@ -169,8 +182,13 @@ export default function Home() {
                     onChange={handleChange}
                     required
                   />
-                  <button onClick={handleEmailSubmit}>Submit</button>
-                </div>
+                  <input type="submit" value="Submit" />
+                </form>
+                {emailError && (
+                  <div className="email-error" ref={errorRef}>
+                    {emailError}
+                  </div>
+                )}
               </div>
             )}
           </div>

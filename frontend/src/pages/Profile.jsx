@@ -30,7 +30,7 @@ export default function Profile() {
         const res = await fetch("/api/posts");
         const result = await res.json();
 
-        if (userData.username === "admin") {
+        if (userData.username === "admin123") {
           setPosts(result.message);
         } else {
           const raw_posts = result.message.filter(
@@ -269,16 +269,19 @@ export default function Profile() {
           </div>
           <div className="profile-update">
             <h1 className="profile-update-header">UPDATE PROFILE</h1>
-            <div className="username-field">
-              <label htmlFor="username">Update Username:</label>
-              <input
-                type="text"
-                id="username"
-                className="username-input-field"
-                onChange={handleChange}
-                placeholder="Empty for no changes"
-              />
-            </div>
+            {!(userData.username === "admin123") && (
+              <div className="username-field">
+                <label htmlFor="username">Update Username:</label>
+                <input
+                  type="text"
+                  id="username"
+                  value={formdata.username}
+                  className="username-input-field"
+                  onChange={handleChange}
+                  placeholder="Empty for no changes"
+                />
+              </div>
+            )}
             <div className="password-field">
               <label htmlFor="password">Update Password:</label>
               <input
@@ -298,7 +301,7 @@ export default function Profile() {
                 Confirm Update
               </button>
             </div>
-            {userData.username === "admin" && (
+            {userData.username === "admin123" && (
               <div style={{ color: "white" }}>
                 You are the <span style={{ color: "red" }}>Admin</span>. You can
                 edit or delete all posts posted by users.

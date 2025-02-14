@@ -37,10 +37,13 @@ export default function News() {
         }}
       >
         News are scraped from:{" "}
-        <a href="https://www.dailymail.co.uk" style={{ color: "pink" }}>
+        <a
+          href="https://www.dailymail.co.uk/sport/index.html"
+          target="_blank"
+          style={{ color: "pink" }}
+        >
           dailymail.co.uk
-        </a>{" "}
-        website.
+        </a>
       </div>
       <div className="news-list">
         {loading

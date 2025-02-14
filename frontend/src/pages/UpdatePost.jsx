@@ -16,12 +16,17 @@ export default function UpdatePost() {
 
   React.useEffect(() => {
     const getPosts = async () => {
-      if (currentUser)
+      if (currentUser) {
         try {
           const res = await fetch(`/api/posts/${postid}`);
           const result = await res.json();
           if (result.success === false) {
             setError("Failed to get the post");
+            return;
+          }
+          // if this is not the post of the user
+          if (result.message.userid != currentUser.userid) {
+            navigate("/profile");
             return;
           }
           console.log(postid);
@@ -31,10 +36,13 @@ export default function UpdatePost() {
           setError(err.message);
           return;
         }
+      } else {
+        navigate("/signin");
+        return;
+      }
     };
     getPosts();
   }, []);
-  console.log(formData);
 
   const handleImageDelete = (e, imgId) => {
     e.preventDefault();
@@ -99,24 +107,23 @@ export default function UpdatePost() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (formData.title.length > 50 || formData.title.length < 10) {
-        setError("Title must contain 10-50 characters.");
+      console.log(formData);
+      if (formData.title.length > 100 || formData.title.length < 10) {
+        setError("Title must contain 10-100 characters.");
         setLoading(false);
         return;
-      } else if (formData.content.length > 200) {
-        setError("Content length exceeded, must be less than 200 characters.");
+      } else if (formData.content.length > 250) {
+        setError("Content length exceeded, must be less than 250 characters.");
         setLoading(false);
         return;
       }
       let imageUrls = [];
-      if (files.length + formData.images.length > 4) {
-        setError("Image limit exceeds. Maximum 4 images allowed.");
+      if (files && files.length + formData.images.length < 4) {
+        imageUrls = await uploadImages(files);
+      } else if (files.length + formData.images.length > 4) {
+        setError("Images length exceeded. Must be less than 5.");
         setLoading(false);
         return;
-      }
-      console.log(files);
-      if (files) {
-        imageUrls = await uploadImages(files);
       }
       // fetch request to add image to images table that returns post with updated images
       // set post to the returned response

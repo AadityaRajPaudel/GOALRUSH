@@ -117,6 +117,11 @@ export default function ForgetPassword() {
             </button>
           </div>
         )}
+        {error && (
+          <div style={{ color: "red" }}>
+            {error} Resend code or re-verify it.
+          </div>
+        )}
       </form>
     </div>
   );

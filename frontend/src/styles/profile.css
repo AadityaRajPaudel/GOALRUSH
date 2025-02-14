@@ -17,6 +17,10 @@ min-height: 100vh;
   border-right: 1px solid rgb(202, 200, 200);
   padding: 12px;
   color: white;
+  position: sticky;
+  top: 80px;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .profile-update {
