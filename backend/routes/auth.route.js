@@ -23,16 +23,15 @@ authRouter.put("/update/:userid", updateUser);
 authRouter.put("/addemail/:userid", addUserEmail);
 authRouter.delete("/delete/:userid", deleteUser);
 authRouter.delete("/logout", verifyUser, logoutUser);
-authRouter.get("/verifyuser",verifyUser, (req, res) => {
+authRouter.get("/verifyuser", verifyUser, (req, res) => {
   if (!req.user) {
     res.status(401).json({
       success: false,
-      message: "Not authorized"
-    })
-  }
-  else res.status(200).json({success: true, message: req.user})
+      message: "Not authorized",
+    });
+  } else res.status(200).json({ success: true, message: req.user });
 });
 // separate token required for passwordChange
 authRouter.put("/addtoken/:email", addToken);
 authRouter.put("/updatepw", updatePassword);
-authRouter.get("/verifyToken", verifyToken);
+authRouter.post("/verifyToken", verifyToken);

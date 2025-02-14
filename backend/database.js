@@ -72,7 +72,7 @@ export const addUserDB = async (username, password) => {
     const newUserid = result.insertId;
     return getUserByIdDB(newUserid);
   } catch (err) {
-    throw errorThrower(err.message);
+    throw errorThrower("User already exists.");
   }
 };
 
@@ -366,10 +366,18 @@ export const addTokenDB = async (email, randomToken) => {
 
 export const checkTokenExistsDB = async (token) => {
   try {
-    await pool.query("SELECT users WHERE recovery_token=?", [token]);
-    return "Token exists";
+    const [rows] = await pool.query(
+      "SELECT recovery_token FROM users WHERE recovery_token = ?",
+      [token]
+    );
+
+    if (rows.length > 0) {
+      return "Token exists";
+    } else {
+      throw new Error("Token doesn't exist.");
+    }
   } catch (err) {
-    throw errorThrower("Token doesnt exist.");
+    throw new Error("Database query failed: " + err.message);
   }
 };
 

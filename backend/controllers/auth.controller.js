@@ -77,10 +77,11 @@ export const updateUser = async (req, res) => {
   try {
     const userid = req.params.userid;
     const { avatar, username } = req.body;
-    if (!username.trim() || username.length < 6 || username.length > 15)
+
+    if (!username.trim() || username.length < 8 || username.length > 12)
       return res
         .status(403)
-        .json(errorThrower("Username Criteria doesn't match. Length 6-15"));
+        .json(errorThrower("Username Criteria doesn't match. Length 6-12"));
     if (req.body.password) {
       const { password } = req.body;
       const regex =
@@ -121,14 +122,20 @@ export const updateUser = async (req, res) => {
 export const addUserEmail = async (req, res) => {
   const email = req.body.email;
   const userid = req.params.userid;
+  const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
   try {
+    if (!emailRegex.test(email))
+      return res.status(409).json({
+        success: false,
+        message: "Email doesnt match criteria.",
+      });
     const result = await addUserEmailDB(userid, email);
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: result,
     });
   } catch (err) {
-    res.status(409).json(err);
+    res.status(500).json(err);
   }
 };
 
