@@ -4,7 +4,7 @@ import "../styles/newscard.css";
 const NewsCard = ({ news }) => {
   return (
     <div className="news-card">
-      <a href={news.link}>
+      <a href={news.link} target="_blank">
         <h2 className="news-title">{news.header}</h2>
         <div className="image-container">
           <img src={news.imageUrl} alt={news.header} />

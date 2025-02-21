@@ -44,7 +44,7 @@ export default function Create() {
       return;
     };
     checkUserLogin();
-  });
+  }, []);
 
   // handle title and content change
   const handleChange = (e) => {
@@ -103,7 +103,7 @@ export default function Create() {
       const urls = await Promise.all(filesPromises);
       const newFormData = {
         ...formData,
-        images: formData.images.concat(urls),
+        images: formData.images.push(...urls),
       };
       setFormData(newFormData);
       // return newFormData;
@@ -113,12 +113,10 @@ export default function Create() {
       return;
     }
   };
-  console.log(formData);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     // first check title and content
     if (formData.title.length > 50 || formData.title.length < 10) {
       setError("Title must contain 10-50 characters.");
@@ -131,6 +129,7 @@ export default function Create() {
     }
     try {
       await handleImageUpload(files);
+      console.log(formData);
 
       const result = await fetch("/api/posts/upload", {
         method: "POST",
