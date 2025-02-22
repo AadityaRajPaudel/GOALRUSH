@@ -22,6 +22,25 @@ export default function Profile() {
   const dispatch = useDispatch();
   const fileRef = useRef(null);
 
+  React.useEffect(() => {
+    const checkUserLogin = async () => {
+      const res = await fetch("/api/auth/verifyuser", {
+        method: "GET",
+        credentials: "include",
+      });
+      const result = await res.json();
+      console.log(result);
+      if (result.success === false) {
+        console.log(result);
+        dispatch(deleteUserSuccess());
+        navigate("/signin");
+        return;
+      }
+      return;
+    };
+    checkUserLogin();
+  }, []);
+
   useEffect(() => {
     // fetch posts for the current user only
     const fetchPosts = async () => {
@@ -47,36 +66,6 @@ export default function Profile() {
       }
     };
     fetchPosts();
-  }, []);
-
-  React.useEffect(() => {
-    if (!userData || !formdata) {
-      console.log("navigate");
-      navigate("/signin");
-    }
-  }, [userData]);
-
-  // check if user is logged in, else redirect to home and dispatch delete user
-  React.useEffect(() => {
-    const checkUserLogin = async () => {
-      setLoading(true);
-      const res = await fetch("/api/auth/verifyuser", {
-        method: "GET",
-        credentials: "include",
-      });
-      const result = await res.json();
-      console.log(result);
-      if (result.success === false) {
-        console.log(result);
-        setError(result.message);
-        setLoading(false);
-        dispatch(deleteUserSuccess());
-        return;
-      }
-      setLoading(false);
-      return;
-    };
-    checkUserLogin();
   }, []);
 
   const handleChange = (e) => {

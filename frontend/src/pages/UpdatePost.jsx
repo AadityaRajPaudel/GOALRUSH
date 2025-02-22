@@ -9,7 +9,7 @@ export default function UpdatePost() {
   const currentUser = useSelector((state) => state.user.currentUser);
   const navigate = useNavigate();
   const { postid } = useParams();
-  const [files, setFiles] = React.useState();
+  const [files, setFiles] = React.useState([]);
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [formData, setFormdata] = React.useState({});
@@ -32,7 +32,6 @@ export default function UpdatePost() {
             navigate("/profile");
             return;
           }
-          console.log(postid);
           setFormdata(result.message);
           return;
         } catch (err) {
@@ -50,16 +49,15 @@ export default function UpdatePost() {
   const handleImageDelete = (e, imgId) => {
     e.preventDefault();
     try {
-      const updatedImages = formData.images.filter(
-        (image) => image.imageid !== imgId
-      );
       setFormdata((prevPost) => {
+        const updatedImages = prevPost.images.filter(
+          (image) => image.imageid !== imgId
+        );
         return {
           ...prevPost,
           images: updatedImages,
         };
       });
-      return;
     } catch (err) {
       setError(err.message);
     }
@@ -121,9 +119,17 @@ export default function UpdatePost() {
         return;
       }
       let imageUrls = [];
-      if (files && files.length + formData.images.length < 4) {
+      if (
+        files &&
+        files.length > 0 &&
+        files.length + formData.images.length < 4
+      ) {
         imageUrls = await uploadImages(files);
-      } else if (files.length + formData.images.length > 4) {
+      } else if (
+        files &&
+        files.length > 0 &&
+        files.length + formData.images.length > 4
+      ) {
         setError("Images length exceeded. Must be less than 5.");
         setLoading(false);
         return;
@@ -136,7 +142,6 @@ export default function UpdatePost() {
         content: formData.content,
         images: formData.images,
       };
-      console.log(imageUrls);
       const res = await fetch(`/api/posts/${postid}`, {
         method: "PUT",
         headers: {
@@ -153,7 +158,7 @@ export default function UpdatePost() {
       setFormdata(result.message); // result contains {success, message}
       setLoading(false);
       alert("Post updated successfully!");
-      navigate("/home");
+      navigate("/profile");
       return;
     } catch (err) {
       setLoading(false);

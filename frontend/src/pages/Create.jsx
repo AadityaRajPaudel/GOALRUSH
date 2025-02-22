@@ -14,7 +14,7 @@ export default function Create() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [formData, setFormData] = React.useState({
-    userid: userState.currentUser.userid,
+    userid: userState?.currentUser?.userid || null,
     title: "",
     content: "",
     images: [],
@@ -29,7 +29,7 @@ export default function Create() {
 
   React.useEffect(() => {
     const checkUserLogin = async () => {
-      const res = await fetch("/api/auth/checkuserlogintoken", {
+      const res = await fetch("/api/auth/verifyuser", {
         method: "GET",
         credentials: "include",
       });
@@ -118,8 +118,8 @@ export default function Create() {
     e.preventDefault();
     setLoading(true);
     // first check title and content
-    if (formData.title.length > 50 || formData.title.length < 10) {
-      setError("Title must contain 10-50 characters.");
+    if (formData.title.length > 100 || formData.title.length < 10) {
+      setError("Title must contain 10-100 characters.");
       setLoading(false);
       return;
     } else if (formData.content.length > 200) {

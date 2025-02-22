@@ -68,6 +68,10 @@ export default function Post(props) {
         body: JSON.stringify(formdata),
       });
       const result = await res.json();
+      if (result.success === false) {
+        setError(result.message);
+        return;
+      }
       document.getElementById("content").value = ""; // useref
       setComments((prevComments) => {
         const newComment = {

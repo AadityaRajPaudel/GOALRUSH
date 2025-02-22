@@ -10,7 +10,7 @@ export default function ChangePassword() {
   const [formdata, setFormdata] = React.useState({});
   const [error, setError] = React.useState(false);
 
-  // check if token exists in the database
+  // check if token exists
   React.useEffect(() => {
     if (!token) {
       navigate("/");
