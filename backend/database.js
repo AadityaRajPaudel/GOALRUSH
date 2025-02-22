@@ -258,7 +258,9 @@ export const updatePostDB = async (
     } else {
       const oldImagesid = oldImages.map((img) => img.imageid);
       await pool.query(
-        "DELETE FROM images WHERE postid=? AND imageid NOT IN (?)",
+        `DELETE FROM images WHERE postid=? AND imageid NOT IN (${oldImagesid
+          .map(() => "?")
+          .join(",")})`,
         [postId, ...oldImagesid]
       );
     }

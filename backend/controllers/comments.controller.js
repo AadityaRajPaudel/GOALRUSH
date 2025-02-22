@@ -4,6 +4,13 @@ export const postComment = async (req, res) => {
   try {
     const { postid } = req.params;
     const { userid, content } = req.body;
+    if (content && content.length > 50) {
+      res.status(400).json({
+        success: false,
+        message: "Comment must be less than 50 characters.",
+      });
+      return;
+    }
     const result = await postCommentDB(postid, userid, content);
     res.status(201).json({
       success: true,
@@ -11,6 +18,7 @@ export const postComment = async (req, res) => {
         commentId: result,
       },
     });
+    return;
   } catch (err) {
     res.status(409).json(err);
   }
