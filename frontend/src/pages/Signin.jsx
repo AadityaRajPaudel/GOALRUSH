@@ -13,11 +13,9 @@ import OAuth from "../components/OAuth";
 
 export default function Signin() {
   const navigate = useNavigate();
-  const dispatch = useDispatch(); // to dispatch redux state
-  const { currentUser } = useSelector((state) => state.user); // get all details of user slice
-
+  const dispatch = useDispatch(); // to dispatch redux stateW
   const [showPassword, setShowPassword] = React.useState(false);
-  const [formdata, setFormdata] = React.useState({}); // phone, password, confirmPassword
+  const [formdata, setFormdata] = React.useState({});
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
@@ -42,7 +40,7 @@ export default function Signin() {
         body: JSON.stringify(formdata),
       });
       const data = await result.json();
-      console.log(data)
+      console.log(data);
       if (data.success === false) {
         // dispatch login error
         setError(data.message);

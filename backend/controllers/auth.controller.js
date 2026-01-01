@@ -23,7 +23,7 @@ export const signup = async (req, res) => {
     if (username.trim().length < 8 || username.trim().length > 12)
       return res.json(errorThrower("Username length 8-12 required."));
     const regex =
-      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
     if (!regex.test(password)) {
       return res
         .status(409)
@@ -85,13 +85,13 @@ export const updateUser = async (req, res) => {
     if (req.body.password) {
       const { password } = req.body;
       const regex =
-        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
       if (!regex.test(password)) {
         return res
           .status(409)
           .json(
             errorThrower(
-              "Password length(min 8) should include Uppercase, Lowercase, Number and Special character"
+              "Password length(8-20) should include Uppercase, Lowercase, Number and Special character"
             )
           );
       }
@@ -205,6 +205,17 @@ export const updatePassword = async (req, res) => {
   try {
     const token = req.body.token;
     const { password } = req.body;
+    const regex =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
+    if (!regex.test(password)) {
+      return res
+        .status(400)
+        .json(
+          errorThrower(
+            "Password length(8-20) should include Uppercase, Lowercase, Number and Special character"
+          )
+        );
+    }
     const hashedPassword = bcrypt.hashSync(password, 10);
     const result = await updatePasswordDB(token, hashedPassword);
     res.status(201).json({

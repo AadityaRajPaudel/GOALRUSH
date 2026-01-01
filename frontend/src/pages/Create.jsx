@@ -234,6 +234,7 @@ export default function Create() {
                 borderRadius: "4px",
                 cursor: "pointer",
               }}
+              disabled={loading}
             >
               {loading ? "Loading.." : "Create Post"}
             </button>

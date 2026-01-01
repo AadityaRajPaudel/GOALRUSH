@@ -1,12 +1,14 @@
+import dotenv from "dotenv";
+dotenv.config();
 import mysql from "mysql2";
 import { errorThrower } from "./utils/errorThrower.js";
 
 export const pool = mysql
   .createPool({
-    host: "127.0.0.1",
-    user: "root",
-    password: "",
-    database: "goalrush",
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
   })
   .promise();
 
@@ -16,7 +18,13 @@ pool
     console.log("Connected to database.");
   })
   .catch((err) => {
-    console.log(err);
+    console.log(
+      err,
+      process.env.DB_USER,
+      process.env.DB_PASSWORD,
+      process.env.DB_HOST,
+      process.env.DB_DATABASE
+    );
   });
 
 export const getUsersDB = async () => {
@@ -124,7 +132,6 @@ export const addUserEmailDB = async (userid, email) => {
 
 export const deleteUserByIdDB = async (userid) => {
   try {
-    // await pool.query("DELETE * FROM images WHERE postid ") tyo image jasko user delete garna lako ho
     await pool.query("DELETE FROM comments WHERE userid=?", [userid]);
     await pool.query("DELETE FROM likes WHERE userid=?", [userid]);
     await pool.query(
@@ -180,6 +187,7 @@ export const getPostsDB = async () => {
     const [users] = await pool.query("SELECT * FROM users ");
 
     // could use joins too
+    // await pool.query("SELECT * FROM posts, users INNER JOIN posts.userid=users.userid")
     const completePosts = posts.map((post) => {
       return {
         ...post,

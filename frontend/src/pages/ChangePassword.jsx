@@ -27,7 +27,6 @@ export default function ChangePassword() {
           }),
         });
         const result = await res.json();
-        console.log("Hi" + token);
         if (result.success === false) {
           navigate("/");
           return;
@@ -67,8 +66,9 @@ export default function ChangePassword() {
           token,
         }),
       });
-      if (res.success === false) {
-        setError(res.message);
+      const result = await res.json();
+      if (result.success === false) {
+        setError(result.message);
         return;
       }
 

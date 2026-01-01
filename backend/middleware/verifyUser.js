@@ -15,7 +15,7 @@ export const verifyUser = (req, res, next) => {
       error.statusCode = 401;
       return next(error);
     }
-    req.user = validUser; // now next middleware or controller will have access to the validUser using req.user
+    req.user = validUser;
     return next();
   } catch (err) {
     return next(err);

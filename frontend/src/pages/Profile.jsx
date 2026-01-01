@@ -291,7 +291,7 @@ export default function Profile() {
               </button>
             </div>
             {userData.username === "admin123" && (
-              <div style={{ color: "white" }}>
+              <div style={{ color: "black" }}>
                 You are the <span style={{ color: "red" }}>Admin</span>. You can
                 edit or delete all posts posted by users.
               </div>

@@ -1,6 +1,5 @@
 .profile-container {
-  background: rgb(136,181,233);
-background: radial-gradient(circle, rgba(136,181,233,1) 0%, rgba(23,78,87,1) 60%);
+  background: rgb(225, 224, 223);
 min-height: 100vh;
 }
 
@@ -14,13 +13,12 @@ min-height: 100vh;
   flex-direction: column;
   gap: 1.2rem;
   width: 340px;
-  border-right: 1px solid rgb(202, 200, 200);
+  border-right: 1px solid rgb(171, 169, 169);
   padding: 12px;
-  color: white;
+  color: black;
   position: sticky;
   top: 80px;
   height: 100vh;
-  overflow-y: auto;
 }
 
 .profile-update {
@@ -49,7 +47,7 @@ min-height: 100vh;
 }
 
 .profile-update-header {
-  color: white;
+  color: black;
   text-align: center;
   padding: 8px;
 }
@@ -57,11 +55,12 @@ min-height: 100vh;
 .username-field, .password-field {
   display: flex;
   flex-direction: column;
-  color: white;
+  color: black;
 }
 
 .username-input-field, .password-input-field {
   max-width: 400px;
+  border: 1px solid black;
 }
 
 .update-profile-button {

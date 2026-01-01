@@ -13,13 +13,13 @@ import cors from "cors";
 
 const app = express();
 
-app.use(express.json());
-app.use(cors());
-app.use(cookieParser());
+app.use(express.json()); // allow backend to read json data sent from frontend via HTTP requests.
+app.use(cors()); // allows any frontend (if no explicit frontends mentioned) to access this API
+app.use(cookieParser()); // allows accessing cookies for middlewares to verify user
 dotenv.config();
 
-app.listen(3000, () => {
-  console.log("Server listening on port 3000...");
+app.listen(3002, () => {
+  console.log("Server listening on port 3002...");
 });
 
 app.use("/api/users", userRouter); // middleware validate user
